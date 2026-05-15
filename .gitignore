@@ -1,0 +1,14 @@
+# Credenciais - NUNCA subir
+credentials/
+*.json
+
+# Ambiente e segredos
+.env
+.venv/
+
+# Python
+__pycache__/
+*.pyc
+
+# VS Code
+.vscode/
