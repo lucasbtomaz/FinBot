@@ -1,0 +1,63 @@
+import {useEffect,useRef,useState} from 'react';
+import {createRoot} from 'react-dom/client';
+import {request,money,today,dateLabel,type Snapshot,type Command,type Item} from './api';
+import {FinanceForm,type FormSpec} from './FinanceForm';
+import {EntryForm} from './EntryForm';
+import {Installments,ItemDetails} from './Installments';
+import {CategoryChart} from './CategoryChart';
+import {Investments} from './Investments';
+import {Receivables,ReceivableForm,ReceivableSummary} from './Receivables';
+import {CashProjection} from './CashProjection';
+import {TaxRecords} from './TaxRecords';
+import {categories} from './CategoryField';
+import './styles.css';
+
+const views=[['overview','◫','Visão geral'],['entries','⇄','Lançamentos'],['installments','▤','Parcelamentos'],['accounts','▣','Contas e cartões'],['pending','▦','Contas a pagar'],['receivables','↙','Contas a receber'],['investments','↗','Investimentos'],['tax','▧','Imposto de Renda']] as const;
+function App(){
+ const [view,setView]=useState('overview'),[month,setMonth]=useState(today().slice(0,7));
+ const [data,setData]=useState<Snapshot>(),[error,setError]=useState(''),[notice,setNotice]=useState('');
+ const [form,setForm]=useState<FormSpec>(),[all,setAll]=useState(false),[busy,setBusy]=useState(false);
+ const [confirm,setConfirm]=useState<{text:string;command:Command;id:string}>();
+ const [editing,setEditing]=useState<Item>();
+ const [receivable,setReceivable]=useState<{item?:Item}>();
+ const confirmation=useRef<HTMLDialogElement>(null);
+ useEffect(()=>{if(confirm)confirmation.current?.showModal();else confirmation.current?.close()},[confirm]);
+ useEffect(()=>{let active=true;setError('');request(month).then(x=>{if(active)setData(x)}).catch(e=>{if(active)setError(e.message)});return()=>{active=false}},[month]);
+ const save=async(command:Command,id:string)=>{const result=await request(month,command,id);setData(result);setNotice('Dados salvos no seu computador.')};
+ const ask=(text:string,command:Command)=>setConfirm({text,command,id:crypto.randomUUID()});
+ const runConfirm=async()=>{if(!confirm||busy)return;setBusy(true);setError('');try{await save(confirm.command,confirm.id);setConfirm(undefined)}catch(e){setError((e as Error).message)}finally{setBusy(false)}};
+ const navigate=(name:string)=>{setView(name);setAll(false);setNotice('')};
+ const accountName=(id:string)=>data?.accounts.find(x=>x.id===id)?.name??'Conta';
+ const cardName=(id:string)=>data?.cards.find(x=>x.id===id)?.name??'Cartão';
+ const open=(action:string,title:string,extra:Partial<FormSpec>={})=>setForm({action,title,...extra});
+ const items=data?.items.filter(x=>!x.cancelled&&(all||(view==='entries'&&!x.dueDate)||x.dueDate.startsWith(month)))??[];
+ const state=(item:Item)=>item.remainingCents===0?(item.kind==='pagar'?'Pago':'Recebido'):item.paidCents>0?'Parcial':item.dueDate&&item.dueDate<today()?'Em atraso':'Pendente';
+ const itemTable=(rows:Item[])=>rows.length?<div className="table-wrap"><table><thead><tr><th>Descrição</th><th>Vencimento</th><th>Valor</th><th>Falta</th><th>Situação</th><th>Ações</th></tr></thead><tbody>{rows.map(x=><tr key={x.id}><td>{x.name}<small>{x.cardId?cardName(x.cardId)+' · parcela '+x.number+'/'+x.count:x.kind==='pagar'?'A pagar':'A receber'} · {x.category}</small></td><td>{x.dueDate?dateLabel(x.dueDate):'Sem data'}</td><td>{money(x.amountCents)}</td><td>{money(x.remainingCents)}</td><td><span className={'status '+(x.remainingCents===0?'paid':x.dueDate&&x.dueDate<today()?'late':'')}>{state(x)}</span></td><td>{!x.cardId&&x.remainingCents>0&&<button className="text-button" onClick={()=>open('settleItem',x.kind==='pagar'?'Registrar pagamento':'Registrar recebimento',{targetId:x.id,amountCents:x.remainingCents})}>Dar baixa</button>}{!x.cardId&&x.paidCents===0&&<button className="text-button danger" onClick={()=>ask('Cancelar “'+x.name+'”? O lançamento sairá dos totais, mantendo o histórico.',{action:'cancelItem',targetId:x.id})}>Cancelar</button>}{x.cardId&&<span className="help">Fatura / Parcelamentos</span>}</td></tr>)}</tbody></table></div>:<p className="empty">Nenhum lançamento neste período.</p>;
+ const invoicePanel=()=> <section className="panel"><div className="panel-title"><h2>Faturas {all?'cadastradas':'do mês'}</h2></div>{data?.invoices.filter(x=>all||x.dueDate.startsWith(month)).map(x=><div className="invoice" key={x.id}><div><strong>{cardName(x.cardId)}</strong><small>Vence em {dateLabel(x.dueDate)}</small></div><div className="invoice-values"><strong>{money(x.remainingCents)}</strong><small>Total {money(x.amountCents)} · Pago {money(x.paidCents)}</small></div>{x.remainingCents>0?<button onClick={()=>open('payInvoice','Pagar fatura '+cardName(x.cardId),{targetId:x.id,amountCents:x.remainingCents})}>Pagar fatura</button>:<span className="status paid">Fatura paga</span>}</div>)}{!data?.invoices.some(x=>all||x.dueDate.startsWith(month))&&<p className="empty">Nenhuma fatura neste período.</p>}<p className="help">As faturas agrupam as parcelas. Seus valores já estão incluídos nas despesas; não some novamente.</p></section>;
+ const accountPanel=(reserveOnly=false)=><section className="panel"><div className="panel-title"><h2>{reserveOnly?'Dinheiro guardado':'Suas contas'}</h2><button className="text-button" onClick={()=>open('addAccount',reserveOnly?'Cadastrar reserva':'Cadastrar conta',{kind:reserveOnly?'reserva':'conta'})}>+ Adicionar</button></div>{data?.accounts.filter(x=>!reserveOnly||x.kind==='reserva').map(x=><div className="account-row" key={x.id}><span className={'account-icon '+(x.kind==='reserva'?'purple':'')}>{x.name.slice(0,2)}</span><div>{x.name}<small>{x.kind==='reserva'?'Investimento / caixinha · fora do disponível':'Conta disponível'}</small></div><strong>{money(x.balanceCents)}</strong><button className="text-button" onClick={()=>open('adjustBalance','Atualizar saldo · '+x.name,{targetId:x.id,amountCents:x.balanceCents})}>Atualizar saldo</button></div>)}{!data?.accounts.some(x=>!reserveOnly||x.kind==='reserva')&&<p className="empty">Cadastre o saldo que você tem hoje.</p>}</section>;
+ return <><div className="topbar"><div className="brand">▥ <strong>fin<span>bot</span></strong></div><span className="badge">● Uso pessoal · dados locais</span></div><div className="layout"><aside><p className="caption">MEU FINANCEIRO</p><nav aria-label="Menu principal">{views.map(([id,icon,label])=><button className={view===id?'selected':''} aria-current={view===id?'page':undefined} onClick={()=>navigate(id)} key={id}><span aria-hidden="true">{icon}</span>{label}</button>)}</nav><div className="local">● Uso pessoal<small>No seu computador</small></div></aside>
+ <main><header><div><h1>{views.find(x=>x[0]===view)?.[2]}</h1><p>Seu dinheiro, com mais clareza.</p></div><label className="month">Mês de vencimento<input aria-label="Mês de vencimento" type="month" value={month} disabled={!!form||!!receivable||busy} onChange={e=>{if(e.target.value)setMonth(e.target.value)}}/></label></header>
+ {error&&<p className="error" role="alert">{error}</p>}{notice&&<p className="success" role="status">{notice}</p>}
+ {!data?<p role="status">Aguardando conexão com o aplicativo…</p>:<>
+ <div className="toolbar"><button onClick={()=>open('addItem','Cadastrar conta ou contrato')}>+ Cadastrar conta</button><button className="secondary" onClick={()=>open('addPurchase','Compra no cartão')}>+ Compra no cartão</button><button className="secondary" onClick={()=>open('transfer','Guardar, resgatar ou transferir')}>⇄ Transferir</button></div>
+ <section className="metrics" aria-label="Resumo financeiro"><article><p>Disponível em contas</p><strong data-testid="available">{money(data.availableCents)}</strong><small>Saldo atual · investimentos separados</small></article><article><p>A receber no mês · total</p><strong className="green">{money(data.toReceiveCents)}</strong><small>Ainda não entrou nas contas</small></article><article><p>Despesas do mês</p><strong className="red" data-testid="expense">{money(data.expenseCents)}</strong><small>Pagas + pendentes · por vencimento</small></article><article><p>Investimentos</p><strong className="purple-text" data-testid="invested-total">{money((data.investments??[]).reduce((sum,i)=>sum+(i.values.filter(x=>x.month<=month).at(-1)?.valueCents??0),0))}</strong><small>Últimos registros até o mês selecionado</small></article></section>
+ {view==='overview'&&<CashProjection data={data} month={month}/>}
+ {['entries','pending'].includes(view)&&<label className="toggle"><input type="checkbox" checked={all} onChange={e=>setAll(e.target.checked)}/> Mostrar todos os meses</label>}
+ {['overview','receivables'].includes(view)&&<ReceivableSummary items={data.items} month={view==='overview'?month:undefined}/>}
+ {view==='receivables'&&<Receivables items={data.items} open={open} ask={ask} onEdit={item=>setReceivable({item})} onNew={()=>setReceivable({})}/>}
+ {view==='overview'&&<div className="overview-grid"><div><CategoryChart items={data.items} month={month}/>{accountPanel()}<section className="panel"><div className="panel-title"><h2>Lançamentos do mês</h2><button className="text-button" onClick={()=>navigate('entries')}>Ver todos</button></div>{itemTable(items.slice(0,6))}</section></div><div>{invoicePanel()}<section className="note"><strong>Ainda falta pagar no mês</strong><h2>{money(data.toPayCents)}</h2><p>Inclui parcelas pendentes dos cartões. Guardar dinheiro e pagar faturas não aumentam suas despesas.</p></section></div></div>}
+ {view==='entries'&&<><section className="panel"><h2>Todos os lançamentos</h2>{itemTable(items)}</section><p className="help">Veja todas as parcelas e vencimentos na aba Parcelamentos.</p><section className="panel"><h2>Baixas e transferências · todos os meses</h2>{data.payments.map(p=><div className="payment-row" key={p.id}><div>{p.name}<small>{dateLabel(p.date)} · {accountName(p.accountId)} · {money(p.amountCents)}</small></div>{p.receiptPath&&<button className="text-button" onClick={()=>{request(month,{action:'openReceipt',targetId:p.id}).catch(e=>setError(e.message))}}>Abrir comprovante</button>}{p.reversed?<span>Desfeito</span>:<button className="text-button" onClick={()=>ask('Desfazer esta movimentação? O saldo e as parcelas vinculadas serão restaurados.',{action:'reversePayment',targetId:p.id})}>Desfazer</button>}</div>)}{data.payments.length===0&&<p className="empty">Nenhuma movimentação realizada.</p>}</section></>}
+ {view==='pending'&&<><section className="panel"><h2>A pagar fora do cartão</h2>{itemTable(items.filter(x=>x.kind==='pagar'&&!x.cardId&&x.remainingCents>0))}</section>{invoicePanel()}</>}
+ {view==='installments'&&<Installments data={data} open={open} ask={ask} onEdit={setEditing} onNew={()=>open('addItem','Novo contrato',{kind:'parcelado'})}/>}
+ {view==='accounts'&&<>{accountPanel()}<section className="panel"><div className="panel-title"><h2>Cartões de crédito</h2><button onClick={()=>open('addCard','Cadastrar cartão')}>+ Cartão</button></div>{data.cards.map(c=><div className="account-row" key={c.id}><div><strong>{c.name}</strong><small>Vencimento dia {c.dueDay} · primeira fatura informada em cada compra</small></div><strong>{money(data.invoices.filter(x=>x.cardId===c.id).reduce((sum,x)=>sum+x.remainingCents,0))}<small>Comprometido em todas as faturas</small></strong></div>)}{data.cards.length===0&&<p className="empty">Cadastre o Inter ou outro cartão antes de lançar compras.</p>}</section></>}
+ {view==='tax'&&<TaxRecords data={data} onSave={save}/>}
+ {view==='investments'&&<Investments investments={data.investments??[]} month={month} onSave={save}/>}
+
+ </>}<footer>FinBot · Saldos atuais; despesas por mês de vencimento · Dados armazenados neste computador</footer></main></div>
+ {form&&data&&(form.action==='addItem'?<EntryForm data={data} installments={form.kind==='parcelado'} onSave={save} onClose={()=>setForm(undefined)}/>:<FinanceForm spec={form} data={data} onSave={save} onClose={()=>setForm(undefined)}/>)}
+ {receivable&&data&&<ReceivableForm categoryOptions={categories(data)} item={receivable.item} onSave={save} onClose={()=>setReceivable(undefined)}/>}
+ {editing&&<ItemDetails item={editing} onSave={save} onClose={()=>setEditing(undefined)}/>}
+ <dialog ref={confirmation} onCancel={e=>{e.preventDefault();if(!busy)setConfirm(undefined)}} aria-labelledby="confirm-title"><h2 id="confirm-title">Confirmar alteração</h2><p>{confirm?.text}</p>{error&&<p role="alert" className="error">{error}</p>}<div className="actions"><button className="secondary" disabled={busy} onClick={()=>setConfirm(undefined)}>Voltar</button><button disabled={busy} onClick={runConfirm}>{busy?'Salvando…':'Confirmar'}</button></div></dialog>
+ </>;
+}
+createRoot(document.getElementById('root')!).render(<App/>);
