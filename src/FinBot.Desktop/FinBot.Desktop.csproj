@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+<PropertyGroup>
+<OutputType>WinExe</OutputType><TargetFramework>net10.0-windows</TargetFramework>
+<UseWPF>true</UseWPF><ApplicationIcon>Assets/FinBot.ico</ApplicationIcon><AssemblyName>FinBot</AssemblyName>
+</PropertyGroup>
+<ItemGroup>
+<Resource Include="Assets/FinBot.ico" />
+<Content Include="Assets/FinBot.ico"><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory></Content>
+<ProjectReference Include="../FinBot.Infrastructure/FinBot.Infrastructure.csproj" />
+<Content Include="../finbot-ui/dist/**/*"><Link>wwwroot/%(RecursiveDir)%(Filename)%(Extension)</Link><CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory><CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory></Content>
+</ItemGroup>
+<ItemGroup>
+  <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4314.35" />
+</ItemGroup>
+</Project>
