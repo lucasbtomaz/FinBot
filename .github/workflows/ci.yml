@@ -1,0 +1,42 @@
+name: Validacao
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  validar:
+    name: Validar Windows
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Conferir arquivos publicaveis
+        shell: pwsh
+        run: ./scripts/check-publication.ps1
+      - name: Verificar segredos localmente
+        shell: pwsh
+        run: ./scripts/scan-secrets.ps1
+      - run: npm.cmd --prefix src/finbot-ui ci
+      - run: ./scripts/audit-dependencies.ps1
+      - run: npm.cmd --prefix src/finbot-ui run build
+      - run: dotnet test FinBot.slnx --configuration Release
+      - run: dotnet build tests/FinBot.Driver --configuration Release
+      - name: Preparar capturas sinteticas
+        shell: pwsh
+        run: New-Item -ItemType Directory -Force UX/capturas
+      - run: npm.cmd --prefix src/finbot-ui run test:e2e

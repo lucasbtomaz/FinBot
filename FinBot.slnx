@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/FinBot.Core/FinBot.Core.csproj" />
+    <Project Path="src/FinBot.Infrastructure/FinBot.Infrastructure.csproj" />
+    <Project Path="src/FinBot.Desktop/FinBot.Desktop.csproj" />
+  </Folder>
+  <Folder Name="/tests/"><Project Path="tests/FinBot.Tests/FinBot.Tests.csproj" /></Folder>
+</Solution>

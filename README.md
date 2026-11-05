@@ -1,85 +1,28 @@
-# 💰 FinBot — Assistente Financeiro Pessoal via Telegram
+# FinBot 0.0.1
+Aplicativo local de finanças pessoais para Windows, com .NET, React e SQLite. A instalação nova começa vazia: nenhum banco, comprovante, credencial ou dado financeiro do autor acompanha o código ou a distribuição.
 
-Automatize sua vida financeira enviando mensagens de texto. O FinBot interpreta linguagem natural, atualiza sua planilha no Google Sheets e envia alertas inteligentes.
+## Usar
+Extraia toda a pasta do pacote e abra FinBot.exe. Requer Windows x64 e Microsoft Edge WebView2 Runtime. Não é necessário iniciar backend, Node ou Visual Studio. A distribuição inclui o runtime .NET. A versão inicial não possui assinatura digital nem instalador automático.
 
-## Como funciona
+Permite contas, cartões, parcelamentos, recorrências, contas a receber, projeção de caixa, investimentos e organização de informações para IR. Comprovantes são opcionais.
 
+## Dados locais
+O banco fica em %LOCALAPPDATA%/FinBot/data. Os dados pertencem ao usuário do Windows e nunca são enviados ao GitHub pelo aplicativo. Atualizações de esquema fazem backup antes da migração. Ainda não há criptografia própria nem backup periódico.
+Os comprovantes novos ficam em Documentos/FinBot/Comprovantes/ANO/MÊS. Para escolher outra pasta, defina a variável de ambiente FINBOT_RECEIPTS_DIRECTORY com um caminho absoluto e reinicie o aplicativo.
+Feche o FinBot antes de copiar o banco. Faça backup também da pasta de comprovantes. O banco e os arquivos devem ser guardados separadamente do código.
+
+## Desenvolver e validar
+Requisitos: .NET SDK 10, Node.js 24, Windows e Edge.
+```powershell
+npm.cmd --prefix src/finbot-ui ci
+npm.cmd --prefix src/finbot-ui run build
+dotnet test FinBot.slnx --configuration Release
+dotnet build tests/FinBot.Driver --configuration Release
+npm.cmd --prefix src/finbot-ui run test:e2e
 ```
-Você: "Gastei 20 reais no VR"
-Bot:  ✅ Lançado! Saldo VR: R$ 230,00 restantes (até dia 27)
-```
+Os testes usam bancos temporários e exemplos fictícios. Não executam contra a base pessoal.
+Para preparar o ZIP local: scripts/package-release.ps1. A geração de pacote não publica no GitHub.
 
-```
-Você: "Compra no crédito Nubank de 170 reais à vista"
-Bot:  ✅ Registrado! Fatura Nubank: R$ 420,00 / R$ 700,00 (60%)
-```
-
-```
-Você: "Recebi 140 reais do freela"
-Bot:  ✅ Receita registrada! Saldo conta: R$ 1.340,00
-```
-
-## Stack (100% gratuita para uso pessoal)
-
-| Componente | Ferramenta | Custo |
-|---|---|---|
-| Chat | Telegram Bot API | Grátis |
-| Automação | n8n (self-hosted) | Grátis |
-| IA / NLP | Google Gemini API | Grátis (free tier) |
-| Planilha | Google Sheets API | Grátis |
-| Hospedagem | Railway / Render | Grátis (free tier) |
-
-## Roadmap
-
-- [x] Fase 0 — Estrutura do repositório
-- [ ] Fase 1 — Bot Telegram recebe e responde mensagens
-- [ ] Fase 2 — IA interpreta linguagem natural financeira
-- [ ] Fase 3 — Atualização automática do Google Sheets
-- [ ] Fase 4 — Alertas e dicas automáticas
-- [ ] Fase 5 — Setup inicial via chat (cadastro de contas e cartões)
-- [ ] Fase 6 — Multi-usuário
-- [ ] Fase 7 — App móvel (Play Store / Apple Store)
-
-## Início rápido
-
-```bash
-# Clone o repositório
-git clone https://github.com/seu-usuario/finbot.git
-cd finbot
-
-# Instale dependências
-pip install -r requirements.txt
-
-# Configure variáveis de ambiente
-cp .env.example .env
-# Edite o .env com seus tokens
-
-# Rode localmente
-python src/bot/main.py
-```
-
-## Estrutura do projeto
-
-```
-finbot/
-├── src/
-│   ├── bot/          # Lógica do bot Telegram
-│   ├── sheets/       # Integração Google Sheets
-│   ├── ai/           # Interpretação de linguagem natural
-│   └── alerts/       # Sistema de alertas
-├── docs/             # Documentação detalhada
-├── tests/            # Testes automatizados
-├── .env.example      # Variáveis de ambiente necessárias
-└── requirements.txt  # Dependências Python
-```
-
-## Contribuindo
-
-Projeto pessoal em construção. Em breve aberto para colaboradores.
-
----
-
-Feito com Python · Telegram · Google Sheets · Gemini AI
-
-
-![alt text](./src/img/image.png)
+## Contribuições e segurança
+Consulte [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md) e [a auditoria da versão](docs/auditoria-v0.0.1.md).
+A licença MIT permite cópias e alterações em forks. Ela não concede acesso de escrita a este repositório.
