@@ -1,26 +1,172 @@
-import {useEffect,useRef,useState,type FormEvent} from 'react';
-import {type Snapshot,type Item,type Command,dateLabel,money,parseMoney} from './api';
-import {type FormSpec} from './FinanceForm';
-export function ItemDetails({item,onSave,onClose}:{item:Item;onSave:(c:Command,id:string)=>Promise<void>;onClose:()=>void}){
- const dialog=useRef<HTMLDialogElement>(null),id=useRef(crypto.randomUUID());
- const [extra,setExtra]=useState((item.extraCents/100).toFixed(2).replace('.',',')),[note,setNote]=useState(item.note),[busy,setBusy]=useState(false),[error,setError]=useState('');
- useEffect(()=>{dialog.current?.showModal();return()=>dialog.current?.close()},[]);
- const save=async(e:FormEvent)=>{e.preventDefault();setError('');try{setBusy(true);await onSave({action:'editItem',targetId:item.id,extraCents:parseMoney(extra),note},id.current);onClose()}catch(e){setError((e as Error).message)}finally{setBusy(false)}};
- return <dialog ref={dialog} aria-labelledby="item-edit-title" onCancel={e=>{e.preventDefault();if(!busy)onClose()}}><form onSubmit={save}><h2 id="item-edit-title">Observação e valor variável</h2><p>{item.name} · {dateLabel(item.dueDate)}<br/>Fixo: {money(item.baseCents)}</p><fieldset disabled={busy}><label>Adicional desta cobrança (R$)<input aria-label="Adicional desta cobrança (R$)" inputMode="decimal" required value={extra} disabled={item.paidCents>0} onChange={e=>{setExtra(e.target.value);id.current=crypto.randomUUID()}}/></label><label>Observação<textarea aria-label="Observação" maxLength={1000} value={note} onChange={e=>{setNote(e.target.value);id.current=crypto.randomUUID()}}/></label></fieldset><p className="help">Altera apenas esta cobrança. Para mudar o valor de uma cobrança já baixada, desmarque o pagamento primeiro.</p>{error&&<p className="error" role="alert">{error}</p>}<div className="actions"><button type="button" className="secondary" disabled={busy} onClick={onClose}>Cancelar</button><button disabled={busy}>{busy?'Salvando…':'Salvar'}</button></div></form></dialog>
+import { useState, type FormEvent } from 'react';
+import { money, dateLabel, parseMoney, type Snapshot, type Item, type Command } from './api';
+import { Layers, Plus, Calendar, CreditCard } from 'lucide-react';
+
+interface InstallmentsProps {
+  data: Snapshot;
+  open: (action: string, title: string, extra?: any) => void;
+  ask: (text: string, command: Command) => void;
+  onEdit: (item: Item) => void;
+  onNew: () => void;
 }
-const methodNames:Record<string,string>={pix:'Pix',boleto:'Boleto',cartao:'Cartão',debito:'Débito',dinheiro:'Dinheiro',outro:'Outra forma'};
-export function Installments({data,open,ask,onEdit,onNew}:{data:Snapshot;open:(action:string,title:string,extra?:Partial<FormSpec>)=>void;ask:(text:string,c:Command)=>void;onEdit:(item:Item)=>void;onNew:()=>void}){
- const contracts=[
- ...data.purchases.filter(p=>!p.cancelled).map(p=>({id:p.id,name:p.name,method:'cartao',cadence:'mensal',count:p.count,label:data.cards.find(c=>c.id===p.cardId)?.name??'Cartão',canCancel:p.canCancel,parts:data.items.filter(x=>x.purchaseId===p.id),action:'cancelPurchase'})),
- ...data.plans.filter(p=>!p.cancelled).map(p=>({id:p.id,name:p.name,method:p.paymentMethod,cadence:p.cadence,count:p.count,label:p.paymentMethod==='cartao'?(data.cards.find(c=>c.id===data.items.find(x=>x.planId===p.id)?.cardId)?.name??'Cartão'):(methodNames[p.paymentMethod]??p.paymentMethod),canCancel:true,parts:data.items.filter(x=>x.planId===p.id),action:'cancelPlan'}))
- ];
- const forecasts=new Map<string,{pay:number;receive:number}>();
- data.items.filter(x=>!x.cancelled&&(x.purchaseId||x.planId)).forEach(x=>{const key=x.dueDate.slice(0,7),value=forecasts.get(key)??{pay:0,receive:0};if(x.kind==='pagar')value.pay+=x.remainingCents;else value.receive+=x.remainingCents;forecasts.set(key,value)});
- const render=(cadence:string)=><section className="panel"><h2>{cadence==='mensal'?'Contratos e compras parceladas':cadence==='mensal-recorrente'?'Cobranças mensais recorrentes':'Cobranças semanais recorrentes'}</h2>{contracts.filter(p=>p.cadence===cadence).map(p=>{
-  const active=p.parts.filter(x=>!x.cancelled),paid=active.filter(x=>x.remainingCents===0).length,total=active.reduce((sum,x)=>sum+x.amountCents,0),remaining=active.reduce((sum,x)=>sum+x.remainingCents,0);
-  return <details className="contract" key={p.id}><summary><strong>{p.name}</strong> · {p.label}<small>{paid} pagas de {active.length}{cadence!=='mensal'?' cobranças previstas':''} · faltam {money(remaining)}{p.parts.some(x=>x.cancelled)?' · há cobranças canceladas':''}</small></summary><div className="contract-summary"><span>Contrato<strong>{p.name}</strong></span><span>{cadence==='mensal'?'Valor da primeira parcela':cadence==='mensal-recorrente'?'Valor mensal':'Fixo semanal'}<strong>{money(active[0]?.baseCents??0)}</strong></span><span>{cadence==='mensal'?'Total do contrato':'Previsão gerada'}<strong>{money(total)}</strong></span><span>Total pagas<strong>{paid} / {active.length}</strong></span></div>
-  <div className="table-wrap"><table><thead><tr><th>Pago</th><th>{cadence==='mensal'?'Parcela':cadence==='mensal-recorrente'?'Mês':'Semana'}</th><th>Vencimento</th><th>Valor</th><th>Falta</th><th>Observação</th><th>Ações</th></tr></thead><tbody>{p.parts.map(x=><tr key={x.id}><td><input type="checkbox" aria-label={'Parcela '+x.number+' paga de '+p.name} checked={!x.cancelled&&x.remainingCents===0} disabled={x.cancelled} onChange={()=>x.remainingCents===0?ask('Desmarcar esta parcela? Somente a baixa dela será desfeita. As outras parcelas da fatura continuam pagas. Histórico anterior ao cadastro não movimenta o saldo.',{action:'unpayItem',targetId:x.id}):open('payItem',x.kind==='pagar'?'Pagar parcela':'Receber parcela',{targetId:x.id,amountCents:x.remainingCents})}/></td><td>{cadence==='mensal-recorrente'?x.dueDate.slice(5,7)+'/'+x.dueDate.slice(0,4):x.number+' / '+p.count}<small>{x.cancelled?'Cancelada':x.remainingCents===0?'Paga':x.paidCents>0?'Parcial':'Pendente'}</small></td><td>{dateLabel(x.dueDate)}</td><td>{money(x.amountCents)}{x.extraCents>0&&<small>Fixo {money(x.baseCents)} + {money(x.extraCents)}</small>}</td><td>{money(x.remainingCents)}</td><td className="note-cell">{x.note||'—'}</td><td>{!x.cancelled&&x.paidCents>0&&x.remainingCents>0&&<button className="text-button danger" onClick={()=>ask("Desfazer somente o pagamento parcial desta parcela, preservando as outras parcelas?",{action:"unpayItem",targetId:x.id})}>Desfazer baixa parcial</button>}{!x.cancelled&&<button className="text-button" onClick={()=>onEdit(x)}>Nota / adicional</button>}</td></tr>)}</tbody></table></div>
-  <div className="actions">{['semanal','mensal-recorrente'].includes(cadence)&&<button className="secondary" onClick={()=>ask('Gerar mais 12 cobranças '+(cadence==='semanal'?'semanais':'mensais')+' a partir da última data cadastrada?',{action:'extendPlan',targetId:p.id,count:12})}>+ 12 {cadence==='semanal'?'semanas':'meses'}</button>}{p.canCancel&&<button className="text-button danger" onClick={()=>ask('Cancelar o contrato e suas cobranças? Se houver baixas no aplicativo, será necessário desfazê-las antes.',{action:p.action,targetId:p.id})}>Cancelar contrato</button>}</div></details>
- })}{!contracts.some(x=>x.cadence===cadence)&&<p className="empty">{cadence==='mensal'?'Nenhum parcelamento cadastrado.':'Nenhuma cobrança recorrente cadastrada.'}</p>}</section>;
- return <><section className="note"><div className="panel-title"><h2>Parcelamentos e recorrências</h2><button onClick={onNew}>+ Novo contrato</button></div><p>Marque para pagar e informe a conta. Desmarque para desfazer somente aquela parcela. Compras no cartão usam as mesmas parcelas das faturas, sem duplicar despesas.</p></section>{render('mensal')}{render('mensal-recorrente')}{render('semanal')}<section className="panel"><h2>Próximos meses · valores ainda pendentes</h2><p className="help">Parcelamentos e cobranças recorrentes já geradas. Adicionais futuros ainda não informados não entram na previsão.</p><div className="forecast-grid">{[...forecasts].sort(([a],[b])=>a.localeCompare(b)).filter(([key,value])=>key>=data.month&&(value.pay>0||value.receive>0)).map(([key,value])=><article key={key}><strong>{key.slice(5)}/{key.slice(0,4)}</strong><small>A pagar</small><span>{money(value.pay)}</span>{value.receive>0&&<small>A receber {money(value.receive)}</small>}</article>)}</div></section></>;
+
+export function Installments({ data, open, ask, onEdit, onNew }: InstallmentsProps) {
+  // Purchases (cartão de crédito) and multi-installment items
+  const installmentItems = data.items.filter(
+    i => !i.cancelled && (i.cardId || (i.count && i.count > 1))
+  );
+
+  return (
+    <section className="panel" aria-label="Contratos e Parcelamentos">
+      <div className="panel-title">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Layers size={18} style={{ color: '#6366f1' }} />
+          <h2>Parcelamentos e Contratos Ativos</h2>
+        </div>
+        <button onClick={onNew} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+          <Plus size={14} /> Novo Parcelamento
+        </button>
+      </div>
+
+      {installmentItems.length === 0 ? (
+        <p className="empty">Nenhum parcelamento ativo cadastrado.</p>
+      ) : (
+        <div className="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Contrato / Compra</th>
+                <th>Parcela Atual</th>
+                <th>Vencimento</th>
+                <th>Valor Parcela</th>
+                <th>Saldo Restante</th>
+                <th>Situação</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              {installmentItems.map(item => {
+                const isPaid = item.remainingCents === 0;
+                return (
+                  <tr key={item.id}>
+                    <td>
+                      <strong>{item.name}</strong>
+                      <small>
+                        {item.cardId ? 'Cartão de crédito' : 'Boleto / Carnê'} · {item.category}
+                      </small>
+                    </td>
+                    <td>
+                      <span style={{ fontFamily: 'monospace', fontWeight: 600 }}>
+                        {item.number} / {item.count}
+                      </span>
+                    </td>
+                    <td>{item.dueDate ? dateLabel(item.dueDate) : 'Sem data'}</td>
+                    <td>{money(item.amountCents)}</td>
+                    <td>{money(item.remainingCents)}</td>
+                    <td>
+                      <span className={'status ' + (isPaid ? 'paid' : 'pending')}>
+                        {isPaid ? 'Quitado' : 'Em andamento'}
+                      </span>
+                    </td>
+                    <td>
+                      {!isPaid && !item.cardId && (
+                        <button
+                          className="text-button"
+                          onClick={() => open('settleItem', 'Registrar pagamento · ' + item.name, { targetId: item.id, amountCents: item.remainingCents })}
+                        >
+                          Pagar
+                        </button>
+                      )}
+                      <button className="text-button" onClick={() => onEdit(item)}>
+                        Detalhes
+                      </button>
+                      <button
+                        className="text-button danger"
+                        onClick={() => ask(`Cancelar parcela "${item.name}"?`, { action: 'cancelItem', targetId: item.id })}
+                      >
+                        Cancelar
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </section>
+  );
+}
+
+interface ItemDetailsProps {
+  item: Item;
+  onSave: (command: Command, id: string) => Promise<void>;
+  onClose: () => void;
+}
+
+export function ItemDetails({ item, onSave, onClose }: ItemDetailsProps) {
+  const [name, setName] = useState(item.name);
+  const [dueDate, setDueDate] = useState(item.dueDate || '');
+  const [category, setCategory] = useState(item.category || '');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    try {
+      setBusy(true);
+      await onSave({
+        action: 'updateItem',
+        targetId: item.id,
+        name,
+        dueDate,
+        category
+      }, crypto.randomUUID());
+      onClose();
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <dialog open style={{ display: 'block' }}>
+      <header>
+        <h2>Detalhes do Lançamento</h2>
+        <button className="ghost" onClick={onClose}>×</button>
+      </header>
+      <form onSubmit={handleSubmit}>
+        {error && <p className="error">{error}</p>}
+        <label>
+          Descrição
+          <input required value={name} onChange={e => setName(e.target.value)} />
+        </label>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+          <label>
+            Valor Total
+            <input disabled value={money(item.amountCents)} />
+          </label>
+          <label>
+            Falta Pagar
+            <input disabled value={money(item.remainingCents)} />
+          </label>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+          <label>
+            Data de Vencimento
+            <input type="date" value={dueDate} onChange={e => setDueDate(e.target.value)} />
+          </label>
+          <label>
+            Categoria
+            <input value={category} onChange={e => setCategory(e.target.value)} />
+          </label>
+        </div>
+        <div className="actions" style={{ marginTop: '16px' }}>
+          <button type="button" className="secondary" onClick={onClose} disabled={busy}>Fechar</button>
+          <button type="submit" disabled={busy}>{busy ? 'Salvando…' : 'Salvar Alterações'}</button>
+        </div>
+      </form>
+    </dialog>
+  );
 }

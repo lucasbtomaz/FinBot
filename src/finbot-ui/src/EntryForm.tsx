@@ -6,6 +6,8 @@ export function EntryForm({data,onSave,onClose,installments=false}:{data:Snapsho
  const dialog=useRef<HTMLDialogElement>(null),requestId=useRef(crypto.randomUUID());
  const [v,set]=useState({name:'',kind:'pagar',frequency:installments?'parcelado':'unico',method:'pix',amount:'',count:installments?'2':'1',paid:'0',date:today(),firstMonth:today().slice(0,7),cardId:'',category:'Outros',basis:'parcela'});
  const [trackIr,setTrackIr]=useState(false);
+ const [notifyEnabled,setNotifyEnabled]=useState(true);
+ const [notifyDays,setNotifyDays]=useState('3');
  const [busy,setBusy]=useState(false),[error,setError]=useState('');
  useEffect(()=>{dialog.current?.showModal();return()=>dialog.current?.close()},[]);
  const change=(key:keyof typeof v,value:string)=>{set(old=>{const next={...old,[key]:value};if(key==='frequency')next.paid='0';if(key==='frequency')next.count=value==='mensal-recorrente'?'12':value==='semanal'?'52':value==='parcelado'?'2':'1';if((key==='kind'&&value==='receber')||(key==='frequency'&&value==='semanal'))next.method='pix';return next});requestId.current=crypto.randomUUID();setError('')};
@@ -14,7 +16,8 @@ export function EntryForm({data,onSave,onClose,installments=false}:{data:Snapsho
  const card=v.method==='cartao';
  const submit=async(e:FormEvent)=>{e.preventDefault();setError('');try{
   const amount=parseMoney(v.amount),count=v.frequency==='unico'?1:Number(v.count);
-  const common={trackIr,name:v.name.trim(),kind:v.kind,category:canonicalCategory(categories(data),v.category),paymentMethod:v.method};
+  const notifyDaysBefore = (v.kind==='pagar' && notifyEnabled) ? Number(notifyDays) : undefined;
+  const common={trackIr,name:v.name.trim(),kind:v.kind,category:canonicalCategory(categories(data),v.category),paymentMethod:v.method,...(notifyDaysBefore!==undefined?{notifyDaysBefore}:{})};
   let command:Command;
   if(card&&v.frequency==='mensal-recorrente')command={...common,action:'addPlan',cardId:v.cardId,amountCents:amount,count,paidCount:Number(v.paid),date:v.firstMonth+'-01',cadence:'mensal-recorrente'};
   else if(card)command={...common,action:'addPurchase',cardId:v.cardId,amountCents:purchaseTotal(v.amount,v.frequency==='unico'?'total':v.basis,count),count,paidCount:v.frequency==='unico'?0:Number(v.paid),date:v.firstMonth+'-01'};
@@ -35,14 +38,74 @@ export function EntryForm({data,onSave,onClose,installments=false}:{data:Snapsho
  {field('amount',v.frequency==='mensal-recorrente'?'Valor mensal (R$)':v.frequency==='semanal'?'Valor fixo por semana (R$)':v.frequency==='parcelado'?(card&&v.basis==='total'?'Valor TOTAL da compra (R$)':'Valor de cada parcela (R$)'):'Valor (R$)','text',{inputMode:'decimal',placeholder:'0,00'})}
  {v.frequency!=='unico'&&<div className="form-grid">{field('count',v.frequency==='mensal-recorrente'?'Quantos meses prever agora?':v.frequency==='semanal'?'Quantas semanas gerar agora?':'Quantidade de parcelas','number',{min:1,max:card?120:520,step:1})}{field('paid','Quantas já foram pagas antes do cadastro?','number',{min:0,max:Number(v.count)||1,step:1})}</div>}
  {card?field('firstMonth','Mês da primeira fatura','month'):field('date',v.frequency==='unico'?'Vencimento':'Primeiro vencimento','date')}
- <CategoryField options={categories(data)} value={v.category} onChange={value=>change('category',value)}/>
+ <CategoryField options={categories(data)} value={v.category} onChange={(value: string)=>change('category',value)}/>
+ {v.kind==='pagar' && (
+   <div style={{
+     marginTop: '0.75rem',
+     marginBottom: '0.75rem',
+     padding: '0.75rem 0.875rem',
+     borderRadius: '0.75rem',
+     backgroundColor: '#0c1322',
+     border: '1px solid rgba(56, 189, 248, 0.25)',
+     display: 'flex',
+     flexDirection: 'column',
+     gap: '0.5rem'
+   }}>
+     <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0, cursor: 'pointer', fontWeight: 600, color: '#f1f5f9', fontSize: '0.8125rem' }}>
+       <input 
+         type="checkbox" 
+         checked={notifyEnabled} 
+         onChange={e=>{
+           setNotifyEnabled(e.target.checked);
+           requestId.current = crypto.randomUUID();
+         }} 
+         style={{ width: '16px', height: '16px', accentColor: '#0284c7', margin: 0 }}
+       />
+       <span>🔔 Notificação / Alerta de Vencimento</span>
+     </label>
+
+     {notifyEnabled && (
+       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', marginTop: '0.2rem' }}>
+         <label style={{ fontSize: '0.75rem', color: '#94a3b8', margin: 0 }}>
+           Quantos dias antes do vencimento deseja ser alertado?
+         </label>
+         <select 
+           aria-label="Dias de antecedência para alerta"
+           value={notifyDays} 
+           onChange={e=>{
+             setNotifyDays(e.target.value);
+             requestId.current = crypto.randomUUID();
+           }}
+           style={{
+             backgroundColor: '#070b13',
+             border: '1px solid rgba(255, 255, 255, 0.15)',
+             borderRadius: '0.5rem',
+             padding: '0.45rem 0.65rem',
+             color: '#f8fafc',
+             fontSize: '0.8125rem'
+           }}
+         >
+           <option value="1">1 dia antes do vencimento</option>
+           <option value="2">2 dias antes do vencimento</option>
+           <option value="3">3 dias antes do vencimento (Recomendado)</option>
+           <option value="5">5 dias antes do vencimento</option>
+           <option value="7">7 dias antes (1 semana antes)</option>
+           <option value="0">No próprio dia do vencimento</option>
+         </select>
+         <span style={{ fontSize: '0.6875rem', color: '#38bdf8' }}>
+           O FinBot exibirá um alerta inteligente no topo do painel {notifyDays === '0' ? 'no dia do vencimento' : `${notifyDays} dias antes de vencer`}.
+         </span>
+       </div>
+     )}
+   </div>
+ )}
  <p className="help">{preview}{['semanal','mensal-recorrente'].includes(v.frequency)?' · previsão do período gerado, sem adicionais':''}</p>
  {v.frequency==='semanal'&&<p className="help">A partir da data escolhida, repetir toda {weekday}. Para a moto, escolha um sábado e informe 189,00. Os valores variáveis são adicionados separadamente em cada cobrança. Você pode gerar mais semanas depois.</p>}
  {v.frequency==='mensal-recorrente'&&<p className="help">Cobrança contínua, como aluguel, assinatura ou anuidade mensal no cartão. A quantidade acima limita somente a previsão, não a duração da obrigação. Você pode acrescentar mais meses no controle de recorrências. Meses mais curtos usam o último dia, preservando o dia original nos seguintes.</p>}
  {v.frequency==='parcelado'&&<p className="help">Todas as parcelas aparecerão na aba Parcelamentos. As datas mensais preservam o dia inicial; meses mais curtos usam o último dia.</p>}
  {card&&<p className="help">As cobranças também compõem automaticamente as faturas deste cartão, no dia de vencimento cadastrado. Não cadastre a fatura novamente. Confira o mês inicial no banco; fechamento automático ainda não é calculado.</p>}
  {v.frequency!=='unico'&&<p className="help">Pagamentos anteriores ao cadastro são somente histórico: não descontam novamente do saldo inicial.</p>}
- <IrCheck checked={trackIr} onChange={value=>{setTrackIr(value);requestId.current=crypto.randomUUID()}}/>
+ <IrCheck checked={trackIr} onChange={(value: boolean)=>{setTrackIr(value);requestId.current=crypto.randomUUID()}}/>
  </fieldset>{error&&<p role="alert" className="error">{error}</p>}
  <footer className="actions"><button type="button" className="secondary" disabled={busy} onClick={onClose}>Cancelar</button><button disabled={busy}>{busy?'Salvando…':'Salvar'}</button></footer>
  </form></dialog>

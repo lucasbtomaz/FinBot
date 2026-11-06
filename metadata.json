@@ -1,0 +1,8 @@
+{
+  "name": "FinBot - Personal Financial Assistant",
+  "description": "Personal financial assistant with Telegram-style natural language chat, automated Google Sheets ledger, credit card tracking, and smart spending alerts.",
+  "permissions": [],
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

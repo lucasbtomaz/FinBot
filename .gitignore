@@ -1,37 +1,21 @@
-# Credenciais e ambientes locais
+# Dependências e builds
+node_modules/
+dist/
+.dev.pid
+
+# Credenciais - NUNCA subir
 credentials/
+credentials/*.json
+*.key
+
+# Ambiente e segredos
 .env
-.env.*
-!.env.example
 .venv/
+
+# Python
 __pycache__/
 *.pyc
+
+# VS Code / IDE
 .vscode/
-# .NET e React
-**/bin/
-**/obj/
-**/node_modules/
-**/dist/
-artifacts/
-# Dados pessoais
-*.db
-*.db-*
-*.sqlite
-*.sqlite3
-backups/
-# Configurações JSON do projeto devem ser versionadas.
-
-**/test-results/
-**/playwright-report/
-
-# Conteúdo privado e saídas de revisão
-UX/capturas/
-UX/referencias/
-*.pdf
-*.pfx
-*.pem
-*.key
-*.log
-*.bundle
-*.zip
-local-settings.json
+.idea/
