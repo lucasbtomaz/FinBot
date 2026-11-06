@@ -1,28 +1,112 @@
-import {money,type Item} from './api';
+import { useMemo } from 'react';
+import { money, type Item } from './api';
 
-export function CategoryChart({items,month}:{items:Item[];month:string}){
- const palette=['#8eb5ff','#f2b66d','#81d3a5','#c4a0f0','#f18fa8','#73cdd6','#e1ce72','#e99975','#a9c984','#a7a2f4','#db9ad0','#80bfc2'];
- const categoryKey=(name:string)=>(name.trim()||'Sem categoria').toLocaleLowerCase('pt-BR');
- const categories=[...new Set(items.filter(item=>item.kind==='pagar').map(item=>categoryKey(item.category)))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
- const colors=new Map(categories.map((key,index)=>[key,palette[index]??('hsl('+((index*137.508)%360)+' 65% 72%)')]));
- const totals=new Map<string,{name:string;cents:number}>();
- for(const item of items){
-  if(item.cancelled||item.kind!=='pagar'||!item.dueDate.startsWith(month))continue;
-  const name=item.category.trim()||'Sem categoria';
-  const key=name.toLocaleLowerCase('pt-BR');
-  const group=totals.get(key)??{name,cents:0};
-  group.cents+=item.amountCents;
-  totals.set(key,group);
- }
- const rows=[...totals.values()].filter(x=>x.cents>0).sort((a,b)=>b.cents-a.cents||a.name.localeCompare(b.name,'pt-BR'));
- const total=rows.reduce((sum,x)=>sum+x.cents,0);
- const max=rows[0]?.cents??1;
- return <section className="panel category-chart" aria-labelledby="category-chart-title">
-  <div className="panel-title"><h2 id="category-chart-title">Despesas por categoria</h2><strong>{money(total)}</strong></div>
-  <p className="help">Do maior para o menor gasto · pagas e pendentes no mês de vencimento.</p>
-  {rows.length?<ul className="category-bars">{rows.map(row=><li key={row.name}>
-   <div className="category-label"><span>{row.name}</span><span><strong>{money(row.cents)}</strong><small>{(row.cents/total).toLocaleString('pt-BR',{style:'percent',maximumFractionDigits:1})} do total</small></span></div>
-   <div className="category-track" aria-hidden="true"><div style={{width:(row.cents/max*100)+'%',backgroundColor:colors.get(categoryKey(row.name))}}/></div>
-  </li>)}</ul>:<p className="empty">Nenhuma despesa neste mês. Cadastre uma conta com categoria para ver o gráfico.</p>}
- </section>;
+interface CategoryChartProps {
+  items: Item[];
+  month: string;
+}
+
+const CATEGORY_COLORS: Record<string, string> = {
+  'Transporte': '#38bdf8',
+  'Transporte / Moto': '#0284c7',
+  'Eletrônicos': '#818cf8',
+  'Eletrônicos / Igor': '#6366f1',
+  'Empréstimo': '#f43f5e',
+  'Empréstimo Família': '#fb7185',
+  'Empréstimo Pan': '#e11d48',
+  'Empréstimo Nubank': '#be123c',
+  'Acordo': '#f59e0b',
+  'Acordo / Serasa': '#d97706',
+  'Acordo Santander': '#b45309',
+  'Acordo / Dívida': '#92400e',
+  'Saúde / Odonto': '#10b981',
+  'Compras / Shopee': '#ec4899',
+  'Impostos / Tributos': '#64748b',
+  'Outras Despesas': '#a855f7',
+  'Outros': '#94a3b8'
+};
+
+export function CategoryChart({ items, month }: CategoryChartProps) {
+  const categoryStats = useMemo(() => {
+    const monthItems = items.filter(
+      i => !i.cancelled && i.kind === 'pagar' && (i.dueDate ? i.dueDate.startsWith(month) : true)
+    );
+
+    const map = new Map<string, { totalCents: number; paidCents: number; count: number }>();
+
+    for (const item of monthItems) {
+      const cat = item.category || 'Outros';
+      const existing = map.get(cat) || { totalCents: 0, paidCents: 0, count: 0 };
+      existing.totalCents += item.amountCents;
+      existing.paidCents += item.paidCents;
+      existing.count += 1;
+      map.set(cat, existing);
+    }
+
+    const totalMonth = monthItems.reduce((acc, i) => acc + i.amountCents, 0);
+
+    return Array.from(map.entries())
+      .map(([category, stats]) => ({
+        category,
+        totalCents: stats.totalCents,
+        paidCents: stats.paidCents,
+        count: stats.count,
+        percent: totalMonth > 0 ? (stats.totalCents / totalMonth) * 100 : 0,
+        color: CATEGORY_COLORS[category] || '#6366f1'
+      }))
+      .sort((a, b) => b.totalCents - a.totalCents);
+  }, [items, month]);
+
+  const totalSpent = categoryStats.reduce((sum, c) => sum + c.totalCents, 0);
+
+  return (
+    <section className="panel" aria-label="Gastos por Categoria">
+      <div className="panel-title">
+        <h2>Despesas por Categoria</h2>
+        <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+          Total: {money(totalSpent)}
+        </span>
+      </div>
+
+      {categoryStats.length === 0 ? (
+        <p className="empty">Nenhuma despesa registrada para {month}.</p>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '10px' }}>
+          {categoryStats.map(stat => (
+            <div key={stat.category} style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12.5px' }}>
+                <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
+                  {stat.category}
+                  <small style={{ marginLeft: '6px', color: 'var(--text-muted)' }}>
+                    ({stat.count} {stat.count === 1 ? 'item' : 'itens'})
+                  </small>
+                </span>
+                <span style={{ fontFamily: 'monospace', fontWeight: 600 }}>
+                  {money(stat.totalCents)}{' '}
+                  <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 400 }}>
+                    ({stat.percent.toFixed(1)}%)
+                  </span>
+                </span>
+              </div>
+              <div style={{
+                height: '7px',
+                borderRadius: '4px',
+                backgroundColor: 'var(--bg-surface-hover)',
+                overflow: 'hidden',
+                position: 'relative'
+              }}>
+                <div style={{
+                  height: '100%',
+                  width: `${stat.percent}%`,
+                  backgroundColor: stat.color,
+                  borderRadius: '4px',
+                  transition: 'width 0.3s ease'
+                }} />
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
+  );
 }

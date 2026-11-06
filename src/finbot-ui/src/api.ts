@@ -1,7 +1,7 @@
 export type TaxRecord={id:string;sourceType:string;sourceId:string;name:string;document:string;category:string;note:string;confirmed:boolean};
 export type Account = {id:string;name:string;kind:string;balanceCents:number};
-export type Card = {id:string;name:string;dueDay:number};
-export type Item = {id:string;name:string;kind:string;amountCents:number;paidCents:number;remainingCents:number;dueDate:string;category:string;purchaseId:string;cardId:string;number:number;count:number;cancelled:boolean;planId:string;paymentMethod:string;baseCents:number;extraCents:number;note:string;payer:string;confidence:string;receivableCadence:string};
+export type Card = {id:string;name:string;dueDay:number;closingDay?:number;limitCents?:number;bank?:string;accountName?:string};
+export type Item = {id:string;name:string;kind:string;amountCents:number;paidCents:number;remainingCents:number;dueDate:string;category:string;purchaseId:string;cardId:string;number:number;count:number;cancelled:boolean;planId:string;paymentMethod:string;baseCents:number;extraCents:number;note:string;payer:string;confidence:string;receivableCadence:string;notifyDaysBefore?:number};
 export type Purchase = {id:string;name:string;cardId:string;amountCents:number;count:number;cancelled:boolean;canCancel:boolean};
 export type Invoice = {id:string;cardId:string;dueDate:string;amountCents:number;paidCents:number;remainingCents:number};
 export type Payment = {id:string;name:string;accountId:string;date:string;amountCents:number;reversed:boolean;receiptPath:string};
@@ -9,8 +9,11 @@ export type Snapshot = {month:string;availableCents:number;reservedCents:number;
 export type Command = {action:string; [key:string]:string|number|boolean};
 type Response = {requestId:string;ok:boolean;data:Snapshot;error:string};
 type Bridge = {postMessage(value:unknown):void;addEventListener(type:'message',callback:(event:MessageEvent<Response>)=>void):void;removeEventListener(type:'message',callback:(event:MessageEvent<Response>)=>void):void};
+import { setupWebBridge } from './webBridge';
+
 declare global { interface Window { chrome?:{webview?:Bridge} } }
 export function request(month:string,command?:Command,requestId:string=crypto.randomUUID()):Promise<Snapshot> {
+  setupWebBridge();
   const bridge=window.chrome?.webview;
   if(!bridge) return Promise.reject(new Error('Abra pelo FinBot.exe para acessar e salvar seus dados.'));
   return new Promise((resolve,reject)=>{
@@ -38,4 +41,4 @@ export function parseMoney(value:string):number {
 export type Plan={id:string;name:string;paymentMethod:string;cadence:string;baseCents:number;startDate:string;count:number;kind:string;category:string;cancelled:boolean};
 
 export type InvestmentValue={month:string;investedCents:number;valueCents:number};
-export type Investment={id:string;name:string;kind:string;institution:string;accountId:string;values:InvestmentValue[]};
+export type Investment={id:string;name:string;kind:string;institution:string;accountId:string;values:InvestmentValue[];targetCents?:number;targetDate?:string;subtitle?:string;initialCents?:number;createdAt?:string;reached?:boolean};
