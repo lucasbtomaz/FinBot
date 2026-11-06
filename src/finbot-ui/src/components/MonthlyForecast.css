@@ -1,0 +1,1 @@
+.monthly-forecast{margin-top:18px}.forecast-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:12px}.forecast-grid article{background:var(--surface-soft);border:1px solid var(--line);border-radius:10px;padding:16px}.forecast-grid span{display:block;margin-top:6px;color:var(--danger)}

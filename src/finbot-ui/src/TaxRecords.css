@@ -1,0 +1,1 @@
+.ir-toggle{display:flex;align-items:center;gap:10px;margin-top:18px}.ir-toggle input{width:20px;height:20px;margin:0;accent-color:var(--accent)}.tax-pending,.tax-confirmed{display:inline-block;border-radius:8px;padding:6px 10px;font-weight:600}.tax-pending{color:var(--warning);background:var(--warning-soft)}.tax-confirmed{color:var(--positive);background:var(--positive-soft)}

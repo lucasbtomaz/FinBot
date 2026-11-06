@@ -1,85 +1,56 @@
-# 💰 FinBot — Assistente Financeiro Pessoal via Telegram
+# FinBot — Finanças pessoais no Windows
 
-Automatize sua vida financeira enviando mensagens de texto. O FinBot interpreta linguagem natural, atualiza sua planilha no Google Sheets e envia alertas inteligentes.
+Aplicação pessoal local em **.NET + React + SQLite**, no mesmo repositório. A versão atual permite cadastrar contas/reservas, valores a pagar/receber, compras parceladas e pagamentos de faturas sem duplicar despesas. Consulte o [guia de lançamentos](docs/como-usar-lancamentos.md) e o [roteiro](TASKS.md).
 
-## Como funciona
+## Como usar
+Depois de gerar a distribuição, dê dois cliques em `artifacts/FinBot/FinBot.exe`.
+Não é necessário iniciar backend, Node ou Visual Studio para usar.
+Mantenha toda a pasta da distribuição junta; o executável depende dos arquivos ao lado dele.
+O aplicativo não abre servidor HTTP e encerra ao fechar a janela.
 
-```
-Você: "Gastei 20 reais no VR"
-Bot:  ✅ Lançado! Saldo VR: R$ 230,00 restantes (até dia 27)
-```
+## Preparação para desenvolvimento
+Windows 10/11 compatível com .NET 10, SDK .NET 10, Node.js 24 LTS e Microsoft Edge WebView2 Runtime.
+A primeira instalação de dependências requer internet. O painel publicado funciona offline.
+No PowerShell, na raiz:
 
-```
-Você: "Compra no crédito Nubank de 170 reais à vista"
-Bot:  ✅ Registrado! Fatura Nubank: R$ 420,00 / R$ 700,00 (60%)
-```
-
-```
-Você: "Recebi 140 reais do freela"
-Bot:  ✅ Receita registrada! Saldo conta: R$ 1.340,00
-```
-
-## Stack (100% gratuita para uso pessoal)
-
-| Componente | Ferramenta | Custo |
-|---|---|---|
-| Chat | Telegram Bot API | Grátis |
-| Automação | n8n (self-hosted) | Grátis |
-| IA / NLP | Google Gemini API | Grátis (free tier) |
-| Planilha | Google Sheets API | Grátis |
-| Hospedagem | Railway / Render | Grátis (free tier) |
-
-## Roadmap
-
-- [x] Fase 0 — Estrutura do repositório
-- [ ] Fase 1 — Bot Telegram recebe e responde mensagens
-- [ ] Fase 2 — IA interpreta linguagem natural financeira
-- [ ] Fase 3 — Atualização automática do Google Sheets
-- [ ] Fase 4 — Alertas e dicas automáticas
-- [ ] Fase 5 — Setup inicial via chat (cadastro de contas e cartões)
-- [ ] Fase 6 — Multi-usuário
-- [ ] Fase 7 — App móvel (Play Store / Apple Store)
-
-## Início rápido
-
-```bash
-# Clone o repositório
-git clone https://github.com/seu-usuario/finbot.git
-cd finbot
-
-# Instale dependências
-pip install -r requirements.txt
-
-# Configure variáveis de ambiente
-cp .env.example .env
-# Edite o .env com seus tokens
-
-# Rode localmente
-python src/bot/main.py
+```powershell
+.\scripts\publish.ps1
+# Opcional: criar atalho para o executável publicado
+.\scripts\create-shortcut.ps1
 ```
 
-## Estrutura do projeto
+A publicação inclui o runtime .NET para Windows x64; o WebView2 Runtime deve estar instalado.
+Se faltar, utilize a [distribuição oficial da Microsoft](https://developer.microsoft.com/microsoft-edge/webview2/).
+Um instalador que prepare esse requisito automaticamente é uma etapa futura.
 
+## Estrutura
+- `src/FinBot.Desktop`: janela WPF/WebView2 e ponte restrita de mensagens.
+- `src/FinBot.Core`: contratos financeiros.
+- `src/FinBot.Infrastructure`: SQLite local.
+- `src/finbot-ui`: interface React/TypeScript.
+- `tests/FinBot.Tests`: testes com bancos temporários.
+- `UX`: histórico visual.
+- `docs/superpowers`: escopo e plano de execução.
+
+## Dados pessoais
+Banco em `%LOCALAPPDATA%/FinBot/data/finbot-desktop.db`; cache visual em `%LOCALAPPDATA%/FinBot/webview`.
+O banco fica fora do repositório e da distribuição. A atualização da base antiga gera backup antes de adicionar as tabelas financeiras. Ainda não há backup periódico nem criptografia própria.
+Para copiar seus dados manualmente, feche o aplicativo e copie o arquivo do banco; não o envie ao GitHub.
+Valores financeiros são representados em centavos inteiros.
+
+## Validar
+```powershell
+dotnet test FinBot.slnx
+cd src/finbot-ui
+npm ci
+npm run build
 ```
-finbot/
-├── src/
-│   ├── bot/          # Lógica do bot Telegram
-│   ├── sheets/       # Integração Google Sheets
-│   ├── ai/           # Interpretação de linguagem natural
-│   └── alerts/       # Sistema de alertas
-├── docs/             # Documentação detalhada
-├── tests/            # Testes automatizados
-├── .env.example      # Variáveis de ambiente necessárias
-└── requirements.txt  # Dependências Python
-```
 
-## Contribuindo
+## Código anterior
+`src/bot`, `src/ai`, `src/sheets` e `src/alerts` preservam o protótipo Python.
+O desktop não executa esses módulos e não usa as credenciais de Telegram, Google Sheets ou Gemini.
+O arquivo requirements.txt preexistente permanece preservado.
 
-Projeto pessoal em construção. Em breve aberto para colaboradores.
+O script de publicação também executa o teste de interface no Edge usando banco temporário. O teste não acessa seus dados pessoais.
 
----
-
-Feito com Python · Telegram · Google Sheets · Gemini AI
-
-
-![alt text](./src/img/image.png)
+A aba Parcelamentos reúne contratos no cartão, Pix ou boleto, baixas individuais e previsão mensal. Cobranças semanais permitem valor fixo e adicional por ocorrência; consulte o guia para cadastrar a assinatura da moto.
