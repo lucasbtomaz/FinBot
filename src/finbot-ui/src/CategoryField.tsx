@@ -1,22 +1,77 @@
-import {useState} from 'react';
-import type {Snapshot} from './api';
-export function categories(data:Snapshot){
- const names=new Map<string,string>();
- for(const name of ['Outros',...data.items.map(x=>x.category),...(data.plans??[]).map(x=>x.category)]){
-  const trimmed=name.trim(),key=trimmed.toLocaleLowerCase('pt-BR');
-  if(trimmed&&!names.has(key))names.set(key,trimmed);
- }
- return [...names.values()].sort((a,b)=>a.localeCompare(b,'pt-BR'));
-}
-export const canonicalCategory=(options:string[],name:string)=>options.find(x=>x.toLocaleLowerCase('pt-BR')===name.trim().toLocaleLowerCase('pt-BR'))??name.trim();
-export function CategoryField({options,value,onChange,label='Categoria'}:{options:string[];value:string;onChange:(v:string)=>void;label?:string}){
- const [creating,setCreating]=useState(false);
- const all=[...new Set([...options,...(!creating&&value?[value]:[])])].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+import type { Snapshot } from './api';
 
- return <><label>{label}<select aria-label={label} required value={creating?'__new':value} onChange={e=>{const fresh=e.target.value==='__new';setCreating(fresh);onChange(fresh?'':e.target.value)}}>
- {all.map(x=><option key={x} value={x}>{x}</option>)}<option value="__new">Nova categoria…</option></select></label>
- {creating&&<label>Nova categoria<input aria-label="Nova categoria" required maxLength={150} value={value} onChange={e=>onChange(e.target.value)} onBlur={()=>onChange(canonicalCategory(options,value))}/><small>Se o nome já existir, a categoria cadastrada será reutilizada.</small></label>}</>;
+export function categories(data?: Snapshot): string[] {
+  const defaults = [
+    'Alimentação',
+    'Moradia',
+    'Transporte / Moto',
+    'Saúde / Odonto',
+    'Educação',
+    'Lazer',
+    'Assinaturas',
+    'Dívidas / Empréstimos',
+    'Eletrônicos / Igor',
+    'Compras / Shopee',
+    'Acordo / Serasa',
+    'Impostos / Tributos',
+    'Investimentos',
+    'Outros'
+  ];
+  if (!data?.items) return defaults;
+  const existing = Array.from(new Set(data.items.map(i => i.category).filter(Boolean)));
+  return Array.from(new Set([...defaults, ...existing]));
 }
-export function IrCheck({checked,onChange}:{checked:boolean;onChange:(value:boolean)=>void}){
- return <div><label className="ir-toggle"><input type="checkbox" aria-label="IR" checked={checked} onChange={e=>onChange(e.target.checked)}/> IR</label><p className="help">Enviar para Imposto de Renda como pendente. Complete os dados depois, naquela aba.</p></div>;
+
+export function canonicalCategory(options: string[], val: string): string {
+  if (!val) return 'Outros';
+  const match = options.find(o => o.toLowerCase() === val.trim().toLowerCase());
+  return match || val.trim();
+}
+
+export function CategoryField({ 
+  options, 
+  value, 
+  onChange 
+}: { 
+  options: string[]; 
+  value: string; 
+  onChange: (v: string) => void 
+}) {
+  return (
+    <label>
+      Categoria
+      <input
+        list="category-suggestions"
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        placeholder="Selecione ou digite uma categoria..."
+      />
+      <datalist id="category-suggestions">
+        {options.map(opt => (
+          <option key={opt} value={opt} />
+        ))}
+      </datalist>
+    </label>
+  );
+}
+
+export function IrCheck({ 
+  checked, 
+  onChange 
+}: { 
+  checked: boolean; 
+  onChange: (v: boolean) => void 
+}) {
+  return (
+    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', margin: '8px 0' }}>
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={e => onChange(e.target.checked)}
+      />
+      <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+        Acompanhar no Imposto de Renda (IR)
+      </span>
+    </label>
+  );
 }

@@ -9,6 +9,8 @@ export function FinanceForm({spec,data,onSave,onClose}:{spec:FormSpec;data:Snaps
   const [values,setValues]=useState<Record<string,string>>({name:'',kind:spec.kind??'pagar',amount:spec.amountCents!==undefined?(spec.amountCents/100).toFixed(2).replace('.',','):'',date:today(),firstMonth:today().slice(0,7),category:'Outros',count:'1',paidCount:'0',dueDay:'10',accountId:'',cardId:'',targetId:'',basis:'total'});
   const [receipt,setReceipt]=useState<File>();
   const [trackIr,setTrackIr]=useState(false);
+  const [notifyEnabled,setNotifyEnabled]=useState(true);
+  const [notifyDays,setNotifyDays]=useState('3');
   const [busy,setBusy]=useState(false);const [error,setError]=useState('');
   useEffect(()=>{dialog.current?.showModal();return()=>dialog.current?.close()},[]);
   const change=(key:string,value:string)=>{setValues(v=>({...v,[key]:value}));requestId.current=crypto.randomUUID();setError('')};
@@ -27,7 +29,7 @@ export function FinanceForm({spec,data,onSave,onClose}:{spec:FormSpec;data:Snaps
       if(a==='addPurchase')command.amountCents=purchaseTotal(values.amount,values.basis,Number(values.count));
       if(a==='addAccount') command.kind=values.kind;
       if(a==='addCard') command.dueDay=Number(values.dueDay);
-      if(a==='addItem') Object.assign(command,{kind:values.kind,date:values.date,category:canonicalCategory(categories(data),values.category)});
+      if(a==='addItem') Object.assign(command,{kind:values.kind,date:values.date,category:canonicalCategory(categories(data),values.category),...(values.kind==='pagar'&&notifyEnabled?{notifyDaysBefore:Number(notifyDays)}:{})});
       if(a==='addPurchase')Object.assign(command,{cardId:values.cardId,date:values.firstMonth+'-01',count:Number(values.count),paidCount:Number(values.paidCount),category:canonicalCategory(categories(data),values.category)});
       if(['settleItem','payInvoice','payItem','transfer'].includes(a))Object.assign(command,{accountId:values.accountId,date:values.date});
       if(a==='transfer')command.targetId=values.targetId;
@@ -50,13 +52,73 @@ export function FinanceForm({spec,data,onSave,onClose}:{spec:FormSpec;data:Snaps
     {a==='addCard'&&field('dueDay','Dia de vencimento da fatura','number',{min:1,max:31,step:1})}
     {a==='addItem'&&field('date','Vencimento','date')}
     {a==='addPurchase'&&<><div className="form-grid">{field('count','Quantidade de parcelas','number',{min:1,max:120,step:1})}{field('paidCount','Parcelas já pagas antes do cadastro','number',{min:0,max:Number(values.count)||1,step:1})}</div>{field('firstMonth','Mês da PRIMEIRA fatura da compra','month')}<p className="help">{preview}</p><p className="help">Informe a primeira fatura de toda a compra, inclusive se já pagou algumas parcelas. Confira esse mês no banco; o fechamento não é calculado automaticamente. O histórico já pago não altera seu saldo atual.</p></>}
-    {['addItem','addPurchase'].includes(a)&&<CategoryField options={categories(data)} value={values.category} onChange={value=>change('category',value)}/>}
+    {['addItem','addPurchase'].includes(a)&&<CategoryField options={categories(data)} value={values.category} onChange={(value: string)=>change('category',value)}/>}
+    {a==='addItem' && values.kind==='pagar' && (
+      <div style={{
+        marginTop: '0.75rem',
+        marginBottom: '0.75rem',
+        padding: '0.75rem 0.875rem',
+        borderRadius: '0.75rem',
+        backgroundColor: '#0c1322',
+        border: '1px solid rgba(56, 189, 248, 0.25)',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '0.5rem'
+      }}>
+        <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: 0, cursor: 'pointer', fontWeight: 600, color: '#f1f5f9', fontSize: '0.8125rem' }}>
+          <input 
+            type="checkbox" 
+            checked={notifyEnabled} 
+            onChange={e=>{
+              setNotifyEnabled(e.target.checked);
+              requestId.current = crypto.randomUUID();
+            }} 
+            style={{ width: '16px', height: '16px', accentColor: '#0284c7', margin: 0 }}
+          />
+          <span>🔔 Notificação / Alerta de Vencimento</span>
+        </label>
+
+        {notifyEnabled && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', marginTop: '0.2rem' }}>
+            <label style={{ fontSize: '0.75rem', color: '#94a3b8', margin: 0 }}>
+              Quantos dias antes do vencimento deseja ser alertado?
+            </label>
+            <select 
+              aria-label="Dias de antecedência para alerta"
+              value={notifyDays} 
+              onChange={e=>{
+                setNotifyDays(e.target.value);
+                requestId.current = crypto.randomUUID();
+              }}
+              style={{
+                backgroundColor: '#070b13',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                borderRadius: '0.5rem',
+                padding: '0.45rem 0.65rem',
+                color: '#f8fafc',
+                fontSize: '0.8125rem'
+              }}
+            >
+              <option value="1">1 dia antes do vencimento</option>
+              <option value="2">2 dias antes do vencimento</option>
+              <option value="3">3 dias antes do vencimento (Recomendado)</option>
+              <option value="5">5 dias antes do vencimento</option>
+              <option value="7">7 dias antes (1 semana antes)</option>
+              <option value="0">No próprio dia do vencimento</option>
+            </select>
+            <span style={{ fontSize: '0.6875rem', color: '#38bdf8' }}>
+              O FinBot exibirá um alerta inteligente no topo do painel {notifyDays === '0' ? 'no dia do vencimento' : `${notifyDays} dias antes de vencer`}.
+            </span>
+          </div>
+        )}
+      </div>
+    )}
     {a==='addItem'&&<p className="help">Compra no cartão? Use “Compra no cartão”. Não cadastre a fatura novamente como conta a pagar.</p>}
     {a==='adjustBalance'&&<><p className="help">Saldo registrado: {money(data.accounts.find(x=>x.id===spec.targetId)?.balanceCents??0)}. Informe o valor total que está na conta agora, não apenas a diferença. Para conta negativa, use o sinal de menos; reservas não aceitam saldo negativo.</p><p className="help">A diferença será registrada como ajuste de saldo de hoje. Não altera receitas, despesas ou parcelas. Se este dinheiro corresponde a uma conta a pagar ou receber já cadastrada, use Dar baixa / Receber para atualizar a pendência também. Você pode desfazer o ajuste em Lançamentos → Baixas e transferências.</p></>}
     {a==='addAccount'&&<p className="help">Saldo inicial não é receita. Se o dinheiro já está guardado, cadastre aqui como reserva; para guardar dinheiro saindo de outra conta cadastrada, use Transferir.</p>}
     {['settleItem','payInvoice','payItem','transfer'].includes(a)&&<>{select('accountId',a==='transfer'?'Conta de origem':'Conta da baixa',accountOptions)}{a==='transfer'&&select('targetId','Conta de destino',accountOptions.filter(x=>x.id!==values.accountId))}{field('date','Data da movimentação','date',{max:today()})}</>}
     {a==='payInvoice'&&<p className="help">Pagamento total ou parcial. Atualiza as parcelas desta fatura; não gera outra despesa. Em pagamentos parciais, a distribuição entre compras é automática.</p>}
-    {['addItem','addPurchase'].includes(a)&&<IrCheck checked={trackIr} onChange={value=>{setTrackIr(value);requestId.current=crypto.randomUUID()}}/>}
+    {['addItem','addPurchase'].includes(a)&&<IrCheck checked={trackIr} onChange={(value: boolean)=>{setTrackIr(value);requestId.current=crypto.randomUUID()}}/>}
     {outgoing&&data.receiptEnabled&&<><label>Comprovante de pagamento (opcional)<input aria-label="Comprovante de pagamento" type="file" accept=".pdf,.png,.jpg,.jpeg" onChange={e=>{setReceipt(e.target.files?.[0]);requestId.current=crypto.randomUUID();setError('')}}/></label><p className="help">Anexo opcional: PDF, PNG ou JPG de até 10 MB. Uma cópia será salva em {data.receiptDirectory}, por ano e mês da data da movimentação. O arquivo original será preservado.</p></>}
     </fieldset>
     {error&&<p role="alert" className="error">{error}</p>}
