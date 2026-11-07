@@ -1,0 +1,16 @@
+D:\Projetos\FinBot\src\FinBot.Infrastructure\bin\Debug\net10.0\FinBot.Infrastructure.deps.json
+D:\Projetos\FinBot\src\FinBot.Infrastructure\bin\Debug\net10.0\FinBot.Infrastructure.dll
+D:\Projetos\FinBot\src\FinBot.Infrastructure\bin\Debug\net10.0\FinBot.Infrastructure.pdb
+D:\Projetos\FinBot\src\FinBot.Infrastructure\bin\Debug\net10.0\FinBot.Core.dll
+D:\Projetos\FinBot\src\FinBot.Infrastructure\bin\Debug\net10.0\FinBot.Core.pdb
+D:\Projetos\FinBot\src\FinBot.Infrastructure\obj\Debug\net10.0\FinBot.Infrastructure.csproj.AssemblyReference.cache
+D:\Projetos\FinBot\src\FinBot.Infrastructure\obj\Debug\net10.0\FinBot.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+D:\Projetos\FinBot\src\FinBot.Infrastructure\obj\Debug\net10.0\FinBot.Infrastructure.AssemblyInfoInputs.cache
+D:\Projetos\FinBot\src\FinBot.Infrastructure\obj\Debug\net10.0\FinBot.Infrastructure.AssemblyInfo.cs
+D:\Projetos\FinBot\src\FinBot.Infrastructure\obj\Debug\net10.0\FinBot.Infrastructure.csproj.CoreCompileInputs.cache
+D:\Projetos\FinBot\src\FinBot.Infrastructure\obj\Debug\net10.0\FinBot.Infrastructure.sourcelink.json
+D:\Projetos\FinBot\src\FinBot.Infrastructure\obj\Debug\net10.0\FinBot.I.0795830D.Up2Date
+D:\Projetos\FinBot\src\FinBot.Infrastructure\obj\Debug\net10.0\FinBot.Infrastructure.dll
+D:\Projetos\FinBot\src\FinBot.Infrastructure\obj\Debug\net10.0\refint\FinBot.Infrastructure.dll
+D:\Projetos\FinBot\src\FinBot.Infrastructure\obj\Debug\net10.0\FinBot.Infrastructure.pdb
+D:\Projetos\FinBot\src\FinBot.Infrastructure\obj\Debug\net10.0\ref\FinBot.Infrastructure.dll
