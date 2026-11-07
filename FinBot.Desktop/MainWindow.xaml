@@ -1,0 +1,3 @@
+<Window x:Class="FinBot.Desktop.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:wv="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf" Title="FinBot" Icon="Assets/FinBot.ico" Width="1280" Height="850" MinWidth="760" MinHeight="560" Background="#0B0E14">
+<wv:WebView2 x:Name="Browser" />
+</Window>
