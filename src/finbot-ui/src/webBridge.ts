@@ -433,7 +433,8 @@ export function executeCommand(cmd: Command, requestId: string, month: string): 
         throw new Error('Já existe um cartão com esse nome.');
       }
 
-      db.cards.push({ id, name, dueDay });
+      const closingDay = dueDay > 7 ? dueDay - 7 : dueDay + 23;
+      db.cards.push({ id, name, dueDay, closingDay, limitCents: 0 });
       saveDb();
       return id;
     }

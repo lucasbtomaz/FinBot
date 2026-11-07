@@ -22,8 +22,8 @@ export interface CardAnalysis {
 export function analyzeCardsBestDay(cards: Card[]): CardAnalysis[] {
   // If no cards are registered, provide sample standard cards for simulation
   const targetCards = cards.length > 0 ? cards : [
-    { id: 'sample-inter', name: 'Banco Inter Mastercard', dueDay: 10 },
-    { id: 'sample-nubank', name: 'Nubank Roxinho', dueDay: 25 }
+    { id: 'sample-inter', name: 'Banco Inter Mastercard', dueDay: 10, closingDay: 3, limitCents: 0 },
+    { id: 'sample-nubank', name: 'Nubank Roxinho', dueDay: 25, closingDay: 18, limitCents: 0 }
   ];
 
   const now = new Date();
