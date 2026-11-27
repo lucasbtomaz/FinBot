@@ -1,0 +1,28 @@
+{
+  "version": 2,
+  "dgSpecHash": "esgj+sqZ0T8=",
+  "success": true,
+  "projectFilePath": "D:\\Projetos\\FinBot\\tests\\FinBot.Tests\\FinBot.Tests.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\oluca_1fbt1ez\\.nuget\\packages\\microsoft.codecoverage\\18.12.0\\microsoft.codecoverage.18.12.0.nupkg.sha512",
+    "C:\\Users\\oluca_1fbt1ez\\.nuget\\packages\\microsoft.data.sqlite\\11.0.0\\microsoft.data.sqlite.11.0.0.nupkg.sha512",
+    "C:\\Users\\oluca_1fbt1ez\\.nuget\\packages\\microsoft.data.sqlite.core\\11.0.0\\microsoft.data.sqlite.core.11.0.0.nupkg.sha512",
+    "C:\\Users\\oluca_1fbt1ez\\.nuget\\packages\\microsoft.net.test.sdk\\18.12.0\\microsoft.net.test.sdk.18.12.0.nupkg.sha512",
+    "C:\\Users\\oluca_1fbt1ez\\.nuget\\packages\\microsoft.testplatform.objectmodel\\18.12.0\\microsoft.testplatform.objectmodel.18.12.0.nupkg.sha512",
+    "C:\\Users\\oluca_1fbt1ez\\.nuget\\packages\\microsoft.testplatform.testhost\\18.12.0\\microsoft.testplatform.testhost.18.12.0.nupkg.sha512",
+    "C:\\Users\\oluca_1fbt1ez\\.nuget\\packages\\sqlite\\3.53.4\\sqlite.3.53.4.nupkg.sha512",
+    "C:\\Users\\oluca_1fbt1ez\\.nuget\\packages\\sqlitepclraw.bundle_e_sqlite3\\3.0.5\\sqlitepclraw.bundle_e_sqlite3.3.0.5.nupkg.sha512",
+    "C:\\Users\\oluca_1fbt1ez\\.nuget\\packages\\sqlitepclraw.config.e_sqlite3\\3.0.5\\sqlitepclraw.config.e_sqlite3.3.0.5.nupkg.sha512",
+    "C:\\Users\\oluca_1fbt1ez\\.nuget\\packages\\sqlitepclraw.core\\3.0.5\\sqlitepclraw.core.3.0.5.nupkg.sha512",
+    "C:\\Users\\oluca_1fbt1ez\\.nuget\\packages\\sqlitepclraw.provider.e_sqlite3\\3.0.5\\sqlitepclraw.provider.e_sqlite3.3.0.5.nupkg.sha512",
+    "C:\\Users\\oluca_1fbt1ez\\.nuget\\packages\\xunit\\2.9.3\\xunit.2.9.3.nupkg.sha512",
+    "C:\\Users\\oluca_1fbt1ez\\.nuget\\packages\\xunit.abstractions\\2.0.3\\xunit.abstractions.2.0.3.nupkg.sha512",
+    "C:\\Users\\oluca_1fbt1ez\\.nuget\\packages\\xunit.analyzers\\1.18.0\\xunit.analyzers.1.18.0.nupkg.sha512",
+    "C:\\Users\\oluca_1fbt1ez\\.nuget\\packages\\xunit.assert\\2.9.3\\xunit.assert.2.9.3.nupkg.sha512",
+    "C:\\Users\\oluca_1fbt1ez\\.nuget\\packages\\xunit.core\\2.9.3\\xunit.core.2.9.3.nupkg.sha512",
+    "C:\\Users\\oluca_1fbt1ez\\.nuget\\packages\\xunit.extensibility.core\\2.9.3\\xunit.extensibility.core.2.9.3.nupkg.sha512",
+    "C:\\Users\\oluca_1fbt1ez\\.nuget\\packages\\xunit.extensibility.execution\\2.9.3\\xunit.extensibility.execution.2.9.3.nupkg.sha512",
+    "C:\\Users\\oluca_1fbt1ez\\.nuget\\packages\\xunit.runner.visualstudio\\4.0.1\\xunit.runner.visualstudio.4.0.1.nupkg.sha512"
+  ],
+  "logs": []
+}

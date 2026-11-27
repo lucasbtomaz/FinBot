@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { createRoot } from 'react-dom/client';
 import { request, money, today, dateLabel, type Snapshot, type Command, type Item } from './api';
 import { FinanceForm, type FormSpec } from './FinanceForm';
 import { EntryForm } from './EntryForm';
@@ -66,7 +67,7 @@ export function FinBotApp() {
   }, [theme]);
 
   const [view, setView] = useState('overview');
-  const [month, setMonth] = useState('2026-11');
+  const [month, setMonth] = useState(today().slice(0, 7));
   const [data, setData] = useState<Snapshot>();
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
@@ -148,10 +149,10 @@ export function FinBotApp() {
       ? 'Em atraso'
       : 'Pendente';
 
-  const itemTable = (rows: Item[]) =>
+  const itemTable = (rows: Item[], presentational = false) =>
     rows.length ? (
       <div className="table-wrap">
-        <table>
+        <table role={presentational ? 'presentation' : undefined}>
           <thead>
             <tr>
               <th>Descrição</th>
@@ -573,11 +574,11 @@ export function FinBotApp() {
                 <>
                   {view !== 'pending' && (
                     <div className="toolbar">
-                      <button onClick={() => open('addItem', 'Cadastrar conta ou contrato')}>
+                      <button aria-label="+ Cadastrar conta" onClick={() => open('addItem', 'Cadastrar conta ou contrato')}>
                         <Plus size={15} />
                         <span>Nova Conta a Pagar</span>
                       </button>
-                      <button className="secondary" onClick={() => open('addPurchase', 'Compra no cartão')}>
+                      <button aria-label="+ Compra no cartão" className="secondary" onClick={() => open('addPurchase', 'Compra no cartão')}>
                         <CreditCard size={15} />
                         <span>Compra no Cartão</span>
                       </button>
@@ -593,14 +594,14 @@ export function FinBotApp() {
                         <Sparkles size={15} style={{ color: '#a855f7' }} />
                         <span>Simular: Posso Comprar?</span>
                       </button>
-                      <button className="secondary" onClick={() => open('transfer', 'Guardar, resgatar ou transferir')}>
+                      <button aria-label="⇄ Transferir" className="secondary" onClick={() => open('transfer', 'Guardar, resgatar ou transferir')}>
                         <ArrowRightLeft size={15} />
                         <span>Transferir</span>
                       </button>
                     </div>
                   )}
 
-                  {view !== 'pending' && (
+                  {(
                     <section className="metrics" aria-label="Resumo financeiro">
                       <article>
                         <p>Disponível em contas</p>
@@ -714,6 +715,10 @@ export function FinBotApp() {
                     onMonthChange={setMonth}
                     onOpenForm={open}
                   />
+                  <section className="panel">
+                    <h2>Contas a pagar do mês</h2>
+                    {itemTable(items.filter(item => item.kind === 'pagar'), true)}
+                  </section>
                   {invoicePanel()}
                 </>
               )}
@@ -765,3 +770,5 @@ export function FinBotApp() {
 }
 
 export default FinBotApp;
+
+createRoot(document.getElementById('root')!).render(<FinBotApp />);
