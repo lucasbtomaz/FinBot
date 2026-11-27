@@ -4,7 +4,6 @@ D:\Projetos\FinBot\src\FinBot.Desktop\bin\Release\net10.0-windows\win-x64\FinBot
 D:\Projetos\FinBot\src\FinBot.Desktop\bin\Release\net10.0-windows\win-x64\FinBot.deps.json
 D:\Projetos\FinBot\src\FinBot.Desktop\bin\Release\net10.0-windows\win-x64\FinBot.runtimeconfig.json
 D:\Projetos\FinBot\src\FinBot.Desktop\bin\Release\net10.0-windows\win-x64\FinBot.dll
-D:\Projetos\FinBot\src\FinBot.Desktop\bin\Release\net10.0-windows\win-x64\FinBot.pdb
 D:\Projetos\FinBot\src\FinBot.Desktop\bin\Release\net10.0-windows\win-x64\Microsoft.Data.Sqlite.dll
 D:\Projetos\FinBot\src\FinBot.Desktop\bin\Release\net10.0-windows\win-x64\SQLitePCLRaw.batteries_v2.dll
 D:\Projetos\FinBot\src\FinBot.Desktop\bin\Release\net10.0-windows\win-x64\SQLitePCLRaw.core.dll
@@ -411,8 +410,6 @@ D:\Projetos\FinBot\src\FinBot.Desktop\bin\Release\net10.0-windows\win-x64\FinBot
 D:\Projetos\FinBot\src\FinBot.Desktop\bin\Release\net10.0-windows\win-x64\Microsoft.Web.WebView2.Core.dll
 D:\Projetos\FinBot\src\FinBot.Desktop\bin\Release\net10.0-windows\win-x64\Microsoft.Web.WebView2.WinForms.dll
 D:\Projetos\FinBot\src\FinBot.Desktop\bin\Release\net10.0-windows\win-x64\Microsoft.Web.WebView2.Wpf.dll
-D:\Projetos\FinBot\src\FinBot.Desktop\bin\Release\net10.0-windows\win-x64\FinBot.Infrastructure.pdb
-D:\Projetos\FinBot\src\FinBot.Desktop\bin\Release\net10.0-windows\win-x64\FinBot.Core.pdb
 D:\Projetos\FinBot\src\FinBot.Desktop\bin\Release\net10.0-windows\win-x64\Microsoft.Web.WebView2.Core.xml
 D:\Projetos\FinBot\src\FinBot.Desktop\bin\Release\net10.0-windows\win-x64\Microsoft.Web.WebView2.WinForms.xml
 D:\Projetos\FinBot\src\FinBot.Desktop\bin\Release\net10.0-windows\win-x64\Microsoft.Web.WebView2.Wpf.xml
@@ -428,13 +425,14 @@ D:\Projetos\FinBot\src\FinBot.Desktop\obj\Release\net10.0-windows\win-x64\FinBot
 D:\Projetos\FinBot\src\FinBot.Desktop\obj\Release\net10.0-windows\win-x64\FinBot.Desktop.AssemblyInfoInputs.cache
 D:\Projetos\FinBot\src\FinBot.Desktop\obj\Release\net10.0-windows\win-x64\FinBot.Desktop.AssemblyInfo.cs
 D:\Projetos\FinBot\src\FinBot.Desktop\obj\Release\net10.0-windows\win-x64\FinBot.Desktop.csproj.CoreCompileInputs.cache
-D:\Projetos\FinBot\src\FinBot.Desktop\obj\Release\net10.0-windows\win-x64\FinBot.Desktop.sourcelink.json
 D:\Projetos\FinBot\src\FinBot.Desktop\obj\Release\net10.0-windows\win-x64\FinBot.D.4EA2824C.Up2Date
 D:\Projetos\FinBot\src\FinBot.Desktop\obj\Release\net10.0-windows\win-x64\FinBot.dll
 D:\Projetos\FinBot\src\FinBot.Desktop\obj\Release\net10.0-windows\win-x64\refint\FinBot.dll
-D:\Projetos\FinBot\src\FinBot.Desktop\obj\Release\net10.0-windows\win-x64\FinBot.pdb
 D:\Projetos\FinBot\src\FinBot.Desktop\obj\Release\net10.0-windows\win-x64\FinBot.Desktop.genruntimeconfig.cache
 D:\Projetos\FinBot\src\FinBot.Desktop\obj\Release\net10.0-windows\win-x64\ref\FinBot.dll
 D:\Projetos\FinBot\src\FinBot.Desktop\bin\Release\net10.0-windows\win-x64\Assets\FinBot.ico
-D:\Projetos\FinBot\src\FinBot.Desktop\bin\Release\net10.0-windows\win-x64\wwwroot\assets\index-B8Rpwbv1.css
-D:\Projetos\FinBot\src\FinBot.Desktop\bin\Release\net10.0-windows\win-x64\wwwroot\assets\index-DWwSRHhS.js
+D:\Projetos\FinBot\src\FinBot.Desktop\bin\Release\net10.0-windows\win-x64\wwwroot\assets\purify.es-Dqk5qvad.js
+D:\Projetos\FinBot\src\FinBot.Desktop\bin\Release\net10.0-windows\win-x64\wwwroot\assets\html2canvas-7-jAIhOs.js
+D:\Projetos\FinBot\src\FinBot.Desktop\bin\Release\net10.0-windows\win-x64\wwwroot\assets\index-CLLD-V27.css
+D:\Projetos\FinBot\src\FinBot.Desktop\bin\Release\net10.0-windows\win-x64\wwwroot\assets\index-D2tD6PT-.js
+D:\Projetos\FinBot\src\FinBot.Desktop\bin\Release\net10.0-windows\win-x64\wwwroot\assets\index.es-re77UMYq.js

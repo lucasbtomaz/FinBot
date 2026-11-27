@@ -6,7 +6,6 @@ D:\Projetos\FinBot\tests\FinBot.Tests\bin\Release\net10.0\xunit.runner.visualstu
 D:\Projetos\FinBot\tests\FinBot.Tests\bin\Release\net10.0\FinBot.Tests.deps.json
 D:\Projetos\FinBot\tests\FinBot.Tests\bin\Release\net10.0\FinBot.Tests.runtimeconfig.json
 D:\Projetos\FinBot\tests\FinBot.Tests\bin\Release\net10.0\FinBot.Tests.dll
-D:\Projetos\FinBot\tests\FinBot.Tests\bin\Release\net10.0\FinBot.Tests.pdb
 D:\Projetos\FinBot\tests\FinBot.Tests\bin\Release\net10.0\Microsoft.VisualStudio.CodeCoverage.Shim.dll
 D:\Projetos\FinBot\tests\FinBot.Tests\bin\Release\net10.0\Microsoft.Data.Sqlite.dll
 D:\Projetos\FinBot\tests\FinBot.Tests\bin\Release\net10.0\Microsoft.TestPlatform.CoreUtilities.dll
@@ -16,7 +15,6 @@ D:\Projetos\FinBot\tests\FinBot.Tests\bin\Release\net10.0\Microsoft.TestPlatform
 D:\Projetos\FinBot\tests\FinBot.Tests\bin\Release\net10.0\Microsoft.TestPlatform.CrossPlatEngine.dll
 D:\Projetos\FinBot\tests\FinBot.Tests\bin\Release\net10.0\Microsoft.TestPlatform.Utilities.dll
 D:\Projetos\FinBot\tests\FinBot.Tests\bin\Release\net10.0\Microsoft.VisualStudio.TestPlatform.Common.dll
-D:\Projetos\FinBot\tests\FinBot.Tests\bin\Release\net10.0\Newtonsoft.Json.dll
 D:\Projetos\FinBot\tests\FinBot.Tests\bin\Release\net10.0\SQLitePCLRaw.batteries_v2.dll
 D:\Projetos\FinBot\tests\FinBot.Tests\bin\Release\net10.0\SQLitePCLRaw.core.dll
 D:\Projetos\FinBot\tests\FinBot.Tests\bin\Release\net10.0\SQLitePCLRaw.provider.e_sqlite3.dll
@@ -112,17 +110,13 @@ D:\Projetos\FinBot\tests\FinBot.Tests\bin\Release\net10.0\runtimes\win-x64\nativ
 D:\Projetos\FinBot\tests\FinBot.Tests\bin\Release\net10.0\runtimes\win-x86\native\e_sqlite3.dll
 D:\Projetos\FinBot\tests\FinBot.Tests\bin\Release\net10.0\FinBot.Core.dll
 D:\Projetos\FinBot\tests\FinBot.Tests\bin\Release\net10.0\FinBot.Infrastructure.dll
-D:\Projetos\FinBot\tests\FinBot.Tests\bin\Release\net10.0\FinBot.Infrastructure.pdb
-D:\Projetos\FinBot\tests\FinBot.Tests\bin\Release\net10.0\FinBot.Core.pdb
 D:\Projetos\FinBot\tests\FinBot.Tests\obj\Release\net10.0\FinBot.Tests.csproj.AssemblyReference.cache
 D:\Projetos\FinBot\tests\FinBot.Tests\obj\Release\net10.0\FinBot.Tests.GeneratedMSBuildEditorConfig.editorconfig
 D:\Projetos\FinBot\tests\FinBot.Tests\obj\Release\net10.0\FinBot.Tests.AssemblyInfoInputs.cache
 D:\Projetos\FinBot\tests\FinBot.Tests\obj\Release\net10.0\FinBot.Tests.AssemblyInfo.cs
 D:\Projetos\FinBot\tests\FinBot.Tests\obj\Release\net10.0\FinBot.Tests.csproj.CoreCompileInputs.cache
-D:\Projetos\FinBot\tests\FinBot.Tests\obj\Release\net10.0\FinBot.Tests.sourcelink.json
 D:\Projetos\FinBot\tests\FinBot.Tests\obj\Release\net10.0\FinBot.T.1B9535ED.Up2Date
 D:\Projetos\FinBot\tests\FinBot.Tests\obj\Release\net10.0\FinBot.Tests.dll
 D:\Projetos\FinBot\tests\FinBot.Tests\obj\Release\net10.0\refint\FinBot.Tests.dll
-D:\Projetos\FinBot\tests\FinBot.Tests\obj\Release\net10.0\FinBot.Tests.pdb
 D:\Projetos\FinBot\tests\FinBot.Tests\obj\Release\net10.0\FinBot.Tests.genruntimeconfig.cache
 D:\Projetos\FinBot\tests\FinBot.Tests\obj\Release\net10.0\ref\FinBot.Tests.dll

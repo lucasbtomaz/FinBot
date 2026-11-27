@@ -401,7 +401,7 @@
           "dependencies": {
             "Microsoft.Data.Sqlite": {
               "target": "Package",
-              "version": "[10.0.14, )"
+              "version": "[11.0.0, )"
             }
           },
           "imports": [

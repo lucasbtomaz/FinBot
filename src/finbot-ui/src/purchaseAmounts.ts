@@ -1,15 +1,20 @@
 import { parseMoney, money } from './api';
 
 export function purchaseTotal(amountStr: string, basis: string, count: number): number {
-  const baseCents = parseMoney(amountStr);
-  if (basis === 'parcela') {
-    return baseCents * Math.max(1, count);
+  if (!Number.isInteger(count) || count < 1 || count > 120) throw new Error('Informe de 1 a 120 parcelas.');
+  if (basis !== 'total' && basis !== 'parcela') throw new Error('Escolha como informar o valor da compra.');
+  const amount = parseMoney(amountStr);
+  const total = basis === 'parcela' ? amount * count : amount;
+  if (!Number.isSafeInteger(total) || total > 100000000000 || total < count) {
+    throw new Error('Confira o valor: cada parcela deve ter pelo menos R$ 0,01 e o total deve ser até R$ 1 bilhão.');
   }
-  return baseCents;
+  return total;
 }
 
 export function purchasePreview(totalCents: number, count: number): string {
-  const safeCount = Math.max(1, count);
-  const installmentCents = Math.round(totalCents / safeCount);
-  return `${safeCount} × ${money(installmentCents)} = ${money(totalCents)}`;
+  const base = Math.floor(totalCents / count);
+  const remainder = totalCents % count;
+  return (remainder
+    ? `${remainder} parcela(s) de ${money(base + 1)} e ${count - remainder} de ${money(base)}`
+    : `${count} × ${money(base)}`) + ` · Total ${money(totalCents)}`;
 }

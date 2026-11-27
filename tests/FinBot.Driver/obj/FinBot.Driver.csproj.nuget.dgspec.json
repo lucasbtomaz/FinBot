@@ -5,7 +5,7 @@
   },
   "projects": {
     "D:\\Projetos\\FinBot\\src\\FinBot.Core\\FinBot.Core.csproj": {
-      "version": "1.0.0",
+      "version": "0.0.1",
       "restore": {
         "projectUniqueName": "D:\\Projetos\\FinBot\\src\\FinBot.Core\\FinBot.Core.csproj",
         "projectName": "FinBot.Core",
@@ -347,7 +347,7 @@
       }
     },
     "D:\\Projetos\\FinBot\\src\\FinBot.Infrastructure\\FinBot.Infrastructure.csproj": {
-      "version": "1.0.0",
+      "version": "0.0.1",
       "restore": {
         "projectUniqueName": "D:\\Projetos\\FinBot\\src\\FinBot.Infrastructure\\FinBot.Infrastructure.csproj",
         "projectName": "FinBot.Infrastructure",
@@ -401,7 +401,7 @@
           "dependencies": {
             "Microsoft.Data.Sqlite": {
               "target": "Package",
-              "version": "[10.0.13, )"
+              "version": "[10.0.14, )"
             }
           },
           "imports": [
@@ -699,7 +699,7 @@
       }
     },
     "D:\\Projetos\\FinBot\\tests\\FinBot.Driver\\FinBot.Driver.csproj": {
-      "version": "1.0.0",
+      "version": "0.0.1",
       "restore": {
         "projectUniqueName": "D:\\Projetos\\FinBot\\tests\\FinBot.Driver\\FinBot.Driver.csproj",
         "projectName": "FinBot.Driver",

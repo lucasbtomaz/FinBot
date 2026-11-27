@@ -401,7 +401,7 @@
           "dependencies": {
             "Microsoft.Web.WebView2": {
               "target": "Package",
-              "version": "[1.0.4314.35, )"
+              "version": "[1.0.4370.26, )"
             }
           },
           "imports": [
@@ -772,7 +772,7 @@
           "dependencies": {
             "Microsoft.Data.Sqlite": {
               "target": "Package",
-              "version": "[10.0.14, )"
+              "version": "[11.0.0, )"
             }
           },
           "imports": [

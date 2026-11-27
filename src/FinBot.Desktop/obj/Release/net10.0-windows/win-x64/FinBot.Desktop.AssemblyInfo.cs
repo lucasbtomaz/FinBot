@@ -12,11 +12,11 @@ using System.Reflection;
 
 [assembly: System.Reflection.AssemblyCompanyAttribute("FinBot")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
-[assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1830f9b49f1d945cfec206e6efd0a282ce2a479e")]
+[assembly: System.Reflection.AssemblyFileVersionAttribute("0.0.1.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("0.0.1+a73f745f256065ae1b4273c4c1315115f7cc3faa")]
 [assembly: System.Reflection.AssemblyProductAttribute("FinBot")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FinBot")]
-[assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
+[assembly: System.Reflection.AssemblyVersionAttribute("0.0.1.0")]
 [assembly: System.Runtime.Versioning.TargetPlatformAttribute("Windows7.0")]
 [assembly: System.Runtime.Versioning.SupportedOSPlatformAttribute("Windows7.0")]
 

@@ -9,8 +9,11 @@
 //------------------------------------------------------------------------------
 
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("assets/finbot.ico")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("index-b8rpwbv1.css")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("index-mmmvqqqf.js")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("html2canvas-7-jaihos.js")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("index-clld-v27.css")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("index-d2td6pt-.js")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("index.es-re77umyq.js")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("purify.es-dqk5qvad.js")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("index.html")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("webview2loader.dll")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("webview2loader.dll")]

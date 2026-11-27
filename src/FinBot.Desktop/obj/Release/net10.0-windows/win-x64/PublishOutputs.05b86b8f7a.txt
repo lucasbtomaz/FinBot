@@ -1,13 +1,15 @@
 D:\Projetos\FinBot\artifacts\FinBot\FinBot.exe
 D:\Projetos\FinBot\artifacts\FinBot\Assets/FinBot.ico
-D:\Projetos\FinBot\artifacts\FinBot\wwwroot/assets\index-B8Rpwbv1.css
-D:\Projetos\FinBot\artifacts\FinBot\wwwroot/assets\index-DWwSRHhS.js
+D:\Projetos\FinBot\artifacts\FinBot\wwwroot/assets\html2canvas-7-jAIhOs.js
+D:\Projetos\FinBot\artifacts\FinBot\wwwroot/assets\index-CLLD-V27.css
+D:\Projetos\FinBot\artifacts\FinBot\wwwroot/assets\index-D2tD6PT-.js
+D:\Projetos\FinBot\artifacts\FinBot\wwwroot/assets\index.es-re77UMYq.js
+D:\Projetos\FinBot\artifacts\FinBot\wwwroot/assets\purify.es-Dqk5qvad.js
 D:\Projetos\FinBot\artifacts\FinBot\wwwroot/index.html
 D:\Projetos\FinBot\artifacts\FinBot\runtimes\win-x64\native\WebView2Loader.dll
 D:\Projetos\FinBot\artifacts\FinBot\FinBot.dll
 D:\Projetos\FinBot\artifacts\FinBot\FinBot.deps.json
 D:\Projetos\FinBot\artifacts\FinBot\FinBot.runtimeconfig.json
-D:\Projetos\FinBot\artifacts\FinBot\FinBot.pdb
 D:\Projetos\FinBot\artifacts\FinBot\Microsoft.CSharp.dll
 D:\Projetos\FinBot\artifacts\FinBot\Microsoft.VisualBasic.Core.dll
 D:\Projetos\FinBot\artifacts\FinBot\Microsoft.VisualBasic.dll
@@ -414,8 +416,6 @@ D:\Projetos\FinBot\artifacts\FinBot\FinBot.Infrastructure.dll
 D:\Projetos\FinBot\artifacts\FinBot\Microsoft.Web.WebView2.Core.dll
 D:\Projetos\FinBot\artifacts\FinBot\Microsoft.Web.WebView2.WinForms.dll
 D:\Projetos\FinBot\artifacts\FinBot\Microsoft.Web.WebView2.Wpf.dll
-D:\Projetos\FinBot\artifacts\FinBot\FinBot.Infrastructure.pdb
-D:\Projetos\FinBot\artifacts\FinBot\FinBot.Core.pdb
 D:\Projetos\FinBot\artifacts\FinBot\Microsoft.Web.WebView2.Core.xml
 D:\Projetos\FinBot\artifacts\FinBot\Microsoft.Web.WebView2.WinForms.xml
 D:\Projetos\FinBot\artifacts\FinBot\Microsoft.Web.WebView2.Wpf.xml
