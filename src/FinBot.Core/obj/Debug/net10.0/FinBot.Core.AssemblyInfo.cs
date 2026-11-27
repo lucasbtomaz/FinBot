@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FinBot.Core")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("0.0.1.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("0.0.1+a73f745f256065ae1b4273c4c1315115f7cc3faa")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("0.0.1+abd478b1eab7796bfab8563ef33ebc5272c82892")]
 [assembly: System.Reflection.AssemblyProductAttribute("FinBot.Core")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FinBot.Core")]
 [assembly: System.Reflection.AssemblyVersionAttribute("0.0.1.0")]
