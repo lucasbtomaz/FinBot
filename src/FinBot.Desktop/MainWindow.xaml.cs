@@ -12,7 +12,11 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         Loaded += Initialize;
-        Closed += (_, _) => Browser.Dispose();
+        Closed += (_, _) =>
+        {
+            Browser.Dispose();
+            Application.Current.Shutdown();
+        };
     }
 
     private async void Initialize(object sender, RoutedEventArgs e)
@@ -48,6 +52,11 @@ public partial class MainWindow : Window
         }
         catch (Exception ex)
         {
+            var logDirectory = Path.Combine(Environment.GetFolderPath(
+                Environment.SpecialFolder.LocalApplicationData), "FinBot", "logs");
+            Directory.CreateDirectory(logDirectory);
+            File.WriteAllText(Path.Combine(logDirectory, "startup-error.log"),
+                $"{DateTimeOffset.Now:O}{Environment.NewLine}{ex}");
             MessageBox.Show("Não foi possível abrir o FinBot.\n\n" + ex.Message +
                 "\n\nVerifique se o Microsoft Edge WebView2 Runtime está instalado.",
                 "FinBot", MessageBoxButton.OK, MessageBoxImage.Error);

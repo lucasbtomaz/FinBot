@@ -121,7 +121,7 @@ export function getSpreadsheetPresetItems(): Item[] {
 }
 
 function getInitialDb(): StoredDb {
-  const saved = localStorage.getItem(STORAGE_KEY);
+  const saved = globalThis.localStorage?.getItem(STORAGE_KEY);
   if (saved) {
     try {
       const parsed = JSON.parse(saved);
@@ -285,7 +285,7 @@ function getInitialDb(): StoredDb {
 let db: StoredDb = getInitialDb();
 
 function saveDb() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+  globalThis.localStorage?.setItem(STORAGE_KEY, JSON.stringify(db));
 }
 
 function daysInMonth(year: number, month: number): number {

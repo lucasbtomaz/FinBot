@@ -1,0 +1,17 @@
+{
+  "version": 2,
+  "dgSpecHash": "JUIsSUW4SoQ=",
+  "success": true,
+  "projectFilePath": "D:\\Projetos\\FinBot\\src\\FinBot.Desktop\\FinBot.Desktop.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\oluca_1fbt1ez\\.nuget\\packages\\microsoft.data.sqlite\\11.0.0\\microsoft.data.sqlite.11.0.0.nupkg.sha512",
+    "C:\\Users\\oluca_1fbt1ez\\.nuget\\packages\\microsoft.data.sqlite.core\\11.0.0\\microsoft.data.sqlite.core.11.0.0.nupkg.sha512",
+    "C:\\Users\\oluca_1fbt1ez\\.nuget\\packages\\microsoft.web.webview2\\1.0.4370.26\\microsoft.web.webview2.1.0.4370.26.nupkg.sha512",
+    "C:\\Users\\oluca_1fbt1ez\\.nuget\\packages\\sqlite\\3.53.4\\sqlite.3.53.4.nupkg.sha512",
+    "C:\\Users\\oluca_1fbt1ez\\.nuget\\packages\\sqlitepclraw.bundle_e_sqlite3\\3.0.5\\sqlitepclraw.bundle_e_sqlite3.3.0.5.nupkg.sha512",
+    "C:\\Users\\oluca_1fbt1ez\\.nuget\\packages\\sqlitepclraw.config.e_sqlite3\\3.0.5\\sqlitepclraw.config.e_sqlite3.3.0.5.nupkg.sha512",
+    "C:\\Users\\oluca_1fbt1ez\\.nuget\\packages\\sqlitepclraw.core\\3.0.5\\sqlitepclraw.core.3.0.5.nupkg.sha512",
+    "C:\\Users\\oluca_1fbt1ez\\.nuget\\packages\\sqlitepclraw.provider.e_sqlite3\\3.0.5\\sqlitepclraw.provider.e_sqlite3.3.0.5.nupkg.sha512"
+  ],
+  "logs": []
+}

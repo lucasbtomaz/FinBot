@@ -1,0 +1,13 @@
+D:\Projetos\FinBot\src\FinBot.Core\bin\Debug\net10.0\FinBot.Core.deps.json
+D:\Projetos\FinBot\src\FinBot.Core\bin\Debug\net10.0\FinBot.Core.dll
+D:\Projetos\FinBot\src\FinBot.Core\bin\Debug\net10.0\FinBot.Core.pdb
+D:\Projetos\FinBot\src\FinBot.Core\obj\Debug\net10.0\FinBot.Core.GeneratedMSBuildEditorConfig.editorconfig
+D:\Projetos\FinBot\src\FinBot.Core\obj\Debug\net10.0\FinBot.Core.AssemblyInfoInputs.cache
+D:\Projetos\FinBot\src\FinBot.Core\obj\Debug\net10.0\FinBot.Core.AssemblyInfo.cs
+D:\Projetos\FinBot\src\FinBot.Core\obj\Debug\net10.0\FinBot.Core.csproj.CoreCompileInputs.cache
+D:\Projetos\FinBot\src\FinBot.Core\obj\Debug\net10.0\FinBot.Core.sourcelink.json
+D:\Projetos\FinBot\src\FinBot.Core\obj\Debug\net10.0\FinBot.Core.dll
+D:\Projetos\FinBot\src\FinBot.Core\obj\Debug\net10.0\refint\FinBot.Core.dll
+D:\Projetos\FinBot\src\FinBot.Core\obj\Debug\net10.0\FinBot.Core.pdb
+D:\Projetos\FinBot\src\FinBot.Core\obj\Debug\net10.0\ref\FinBot.Core.dll
+D:\Projetos\FinBot\src\FinBot.Core\obj\Debug\net10.0\FinBot.C.7E52A677.Up2Date

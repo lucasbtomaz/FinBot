@@ -35,6 +35,7 @@ export function CreditCardsView({ data, month, onOpenForm }: CreditCardsViewProp
         </div>
         <button
           onClick={() => onOpenForm('addCard', 'Cadastrar Cartão')}
+          aria-label="+ Cartão"
           className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs rounded-xl flex items-center gap-1.5 cursor-pointer shadow-sm transition"
         >
           <Plus size={14} />
